@@ -14,22 +14,44 @@
 
 
 <html>
+
 	<head>
 		<title>Register</title>
+		<link rel="stylesheet" href="stylesheet.css">
 	</head>
 	
 	<body>
-		<ul>
-			<li><a href="register.php">Register Now</a></li>
-			<li><a href="login.php">Log In</a></li>
-		</ul>
-		<br>
-		<form method="POST">
-			<input type="text" placeholder="username" name="username"></input>
-			<input type="email" placeholder="email" name="email"></input>
-			<input type="password" placeholder="password" name="password"></input>
-			<input type="submit" value="Create Account"></input>
-		</form>
+		<div class = header>
+			<div class=MMatcher>
+				Movie Matchers
+			</div>
+			
+			<div class = links>
+				
+				<a>Search</a>
+				<a>Swipe</a>
+				<a>Profile</a>
+				
+			</div>
+		</div>
+		<div class= container>
+			<div class=overlay>
+				<br>
+				<form id = msform method="POST">
+					<fieldset>
+					<h2 class="fs-title">Create your account</h2>
+					<input type="text" placeholder="username" name="username"></input><br><br>
+					<input type="email" placeholder="email" name="email"></input><br><br>
+					<input type="password" placeholder="password" name="password"></input><br><br>
+					<input type="submit" value="Create Account" class = action-button></input><br>
+
+					<a href="login.php">Log In</a>
+					</fieldset>
+				</form>
+
+
+			</div>
+		</div>
 	</body>
 
 

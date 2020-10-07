@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 	if(isset($_POST["username"]) && isset($_POST["password"]))
 	{
 		$username = $_POST["username"];
@@ -10,7 +12,7 @@
 		$row = $stmt ->fetch();
 		if($row)
 		{
-			session_start();
+			
 			$_SESSION["username"] = $row["username"];
 			$_SESSION["role"] = $row["role"];
 			header("Location: movie.php");
@@ -21,22 +23,42 @@
 
 
 <html>
+
 	<head>
 		<title>Login</title>
+		<link rel="stylesheet" href="stylesheet.css">
 	</head>
 	
 	<body>
-		<ul>
-			<li><a href="register.php">Register Now</a></li>
-			<li><a href="login.php">Log In</a></li>
-		</ul>
-		<br>
-		<form method="POST">
-			<input type="text" placeholder="username" name="username"></input>
-			<input type="password" placeholder="password" name="password"></input>
-			<input type="submit" value="Login"></input>
-		</form>
-	</body>
+		<div class = header>
+			<div class=MMatcher>
+				Movie Matchers
+			</div>
+			
+			<div class = links>
+				
+				<a>Search</a>
+				<a>Swipe</a>
+				<a>Profile</a>
+				
+			</div>
+		</div>
+		<div class= container>
+			<div class=overlay>	
+				<br>
+				<form id = msform method="POST">
+					<fieldset>
+					<h2 class="fs-title">Login</h2>
+					<input type="text" placeholder="username" name="username"></input>
+					<input type="password" placeholder="password" name="password"></input>
+					<input type="submit" value="Login" class = action-button></input><br>
+
+					<a href="register.php">Register Now</a>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+</body>
 
 
 
