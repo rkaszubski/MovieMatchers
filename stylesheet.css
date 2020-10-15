@@ -1,0 +1,208 @@
+
+@import url(https://fonts.googleapis.com/css?family=Montserrat);
+
+/*Fonts */
+body {
+	font-family: montserrat, arial, verdana;
+}
+
+/*Header with site title ad menu links*/
+.header{
+	height: 15%;
+	background-color: #4d0013;
+	text-align: center;
+	padding-top: 2%;
+	color: #f5f5f5;
+}
+
+/* Site Title */
+.MMatcher{
+	float: left;
+	padding: 1%;
+	width: 45%;
+	text-align: center;
+	color: #f5f5f5;
+	font-family:sans-serif;
+	font-size: 4vw;
+}
+
+/*Menu Links*/ 
+.links{
+	float: left;
+	width: 45%;
+	height: 100%;
+	text-align: center;
+	font-family:sans-serif;
+	color: #f5f5f5;
+	padding-top: 3%;
+	padding-left: 5%;
+	
+}
+.links a{
+	color: #f5f5f5;
+	margin-top: 10vw;
+	padding: 2%;
+	text-decoration: none;
+	
+}
+
+/*Tranparent blacked out background*/
+.container{
+	background-image: url(popcorn.jpg);
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	height: 100%;
+}
+.overlay{
+	height: 100%;
+	width: 100%;
+	background: rgba(0, 0, 0, 0.9);/* set opacity*/
+	
+}
+
+* {margin: 0; padding: 0;}
+
+
+/*form styles*/
+#msform {
+	width: 400px;
+	margin: 50px auto;
+	text-align: center;
+	position: relative;
+}
+
+#msform fieldset {
+	background: white;
+	border: 0 none;
+	border-radius: 3px;
+	box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.4);
+	padding: 20px 30px;
+	box-sizing: border-box;
+	width: 80%;
+	margin: 0 10%;
+	
+	/*stacking fieldsets above each other*/
+	position: relative;
+}
+/*Hide all except first fieldset*/
+#msform fieldset:not(:first-of-type) {
+	display: none;
+}
+
+#message{
+	padding: 25%;
+}
+/*inputs*/
+#msform input, #msform textarea {
+	padding: 15px;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	margin-bottom: 10px;
+	width: 100%;
+	box-sizing: border-box;
+	font-family: montserrat;
+	color: #2C3E50;
+	font-size: 13px;
+}
+/*buttons*/
+#msform .action-button {
+	width: 110px;
+	background: #4d0013;;
+	font-weight: bold;
+	color: white;
+	border: 0 none;
+	border-radius: 1px;
+	cursor: pointer;
+	padding: 10px 5px;
+	margin: 10px 5px;
+}
+#msform .action-button:hover, #msform .action-button:focus {
+	box-shadow: 0 0 0 2px white, 0 0 0 3px #4d0013;;
+}
+
+/*headings*/
+.fs-title {
+	font-size: 15px;
+	text-transform: uppercase;
+	color: #2C3E50;
+	margin-bottom: 10px;
+}
+.fs-subtitle {
+	font-weight: normal;
+	font-size: 13px;
+	color: #666;
+	margin-bottom: 20px;
+}
+
+/* Movie Title and information Divs. */
+.movieinfo{
+	color: f5f5f5;
+	text-align: center;
+}
+
+
+/*Container Divs for swipe and pass buttons  */
+.swipe{
+	float: left;
+	height: 60%;
+	width:37.5%;
+	margin-top: 2%;
+	margin-bottom: 2%;
+}
+
+
+/*Buttons for Swiping Functionality*/
+#watch{
+	width: 200px;
+	background: green;;
+	font-weight: bold;
+	color: white;
+	border: 0 none;
+	border-radius: 1px;
+	cursor: pointer;
+	padding: 20px 5px;
+	font-size: 20px;
+	margin: 0;
+	position: relative;
+  	top: 45%;
+  	left: 20%;
+ 
+}
+#watch:hover, #watch:focus{
+	box-shadow: 0 0 0 4px white, 0 0 0 3px #4d0013;;
+}
+
+#pass{
+	width: 200px;
+	background: #4d0013;;
+	font-weight: bold;
+	color: white;
+	border: 0 none;
+	border-radius: 1px;
+	cursor: pointer;
+	padding: 20px 5px;
+	font-size: 20px;
+	margin: 0;
+	position: relative;
+  	top: 45%;
+  	left: 50%;
+}
+
+#pass:hover, #pass:focus{
+	box-shadow: 0 0 0 4px white, 0 0 0 3px #4d0013;;
+}
+
+/*Container for image poster */
+.movieposter{
+	margin-top: 2%;
+	margin-bottom: 2%;
+	float: left;
+	height: 60%;
+	width: 25%;;
+}
+.movieposter img{
+	
+	height: 100%;
+	width: 100%;
+}
+
