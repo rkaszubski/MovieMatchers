@@ -4,8 +4,8 @@
 	$pdo = new PDO("sqlite:MMDataBase.db");
 	$stmt = $pdo->query("SELECT * FROM Movie");
 	$all = $stmt->fetchall();
-	
-	
+
+
 ?>
 <?php
 	$user = $_SESSION["username"];
@@ -28,13 +28,13 @@
 			<div class=MMatcher>
 				Movie Matchers
 			</div>
-			
+
 			<div class = links>
-				
+
 				<a href="search.php">Search</a>
 				<a href="movie.php">Swipe</a>
 				<a href="profile.php">Profile</a>
-				
+
 			</div>
 		</div>
 		<div class= container>
@@ -54,7 +54,7 @@
 
 				<div class="swipe">
 
-					<button class="button" id="watch" onclick="nextmovie()">Watch</button>
+					<button class="button" id="watch" onclick="watchmovie()">Watch</button>
 				</div>
 
 				<div class="movieinfo">
@@ -66,14 +66,14 @@
 		</div>
 
 	</body>
-	
+
 </html>
 
 <script>
 	var movies = <?php echo json_encode($all)?>;
 	var moviecount = 0;
 	populatemovie();
-	
+
 	function populatemovie(){
 		document.getElementById('poster').src=movies[moviecount]["PosterLink"];
 		document.getElementById("title").innerHTML = movies[moviecount]["Title"];
@@ -81,13 +81,13 @@
 		document.getElementById("year").innerHTML ="Release Year: " + movies[moviecount]["Year"];
 		document.getElementById("act").innerHTML = "Actors: " +movies[moviecount]["Actors"];
 	}
-	
-	
+
+
 	function nextmovie(){
 		moviecount = moviecount + 1;
 		populatemovie();
 	}
-	
+
 	function watchmovie(){
 		var movietitle = movies[moviecount]["Title"];
 		$.ajax({
@@ -101,6 +101,5 @@
 		});
 		nextmovie();
 	}
-	
-</script>
 
+</script>
