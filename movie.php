@@ -2,7 +2,7 @@
 	session_start();
 
 	$pdo = new PDO("sqlite:MMDataBase.db");
-	$stmt = $pdo->query("SELECT * FROM Movie");
+	$stmt = $pdo->query("SELECT * FROM Movies");
 	$all = $stmt->fetchall();
 
 
@@ -10,11 +10,11 @@
 <?php
 	$user = $_SESSION["username"];
 
-	if(isset($_POST['outtitle'])){
+	if(isset($_POST['MovieId'])){
 		echo "here";
-		$title = $_POST['outtitle'];
+		$movieId = $_POST['MovieId'];
 		$pdo = new PDO("sqlite:MMDataBase.db");
-		$pdo->query("INSERT INTO Watchlist VALUES('$user','$title')");
+		$pdo->query("INSERT INTO Watchlist VALUES('$user','$movieId', 0)");
 	}
 ?>
 <html>
@@ -75,10 +75,10 @@
 	populatemovie();
 
 	function populatemovie(){
-		document.getElementById('poster').src=movies[moviecount]["PosterLink"];
+		document.getElementById("poster").src=movies[moviecount]["Poster"];
 		document.getElementById("title").innerHTML = movies[moviecount]["Title"];
 		document.getElementById("dir").innerHTML = "Director: " + movies[moviecount]["Director"];
-		document.getElementById("year").innerHTML ="Release Year: " + movies[moviecount]["Year"];
+		document.getElementById("year").innerHTML ="Release Year: " + movies[moviecount]["ReleaseYear"];
 		document.getElementById("act").innerHTML = "Actors: " +movies[moviecount]["Actors"];
 	}
 
@@ -90,10 +90,11 @@
 
 	function watchmovie(){
 		var movietitle = movies[moviecount]["Title"];
+		var movieIdentity = movies[moviecount]["MID"];
 		$.ajax({
 		type: 'POST',
 		url: 'movie.php',
-		data: {'outtitle': movietitle},
+		data: {'MovieId': movieIdentity},
 		success: function(data)
 		{
 			alert(movietitle + " added to watchlist");
