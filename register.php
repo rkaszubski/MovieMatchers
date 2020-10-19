@@ -43,17 +43,29 @@ function noSpecialChar($string) {
 				$emailErr = "Special Characters are not allowed, please use a valid email and try again";
 			}
 			$pdo = new PDO("sqlite:MMDataBase.db");
-			$pdo->query("INSERT INTO Users (username, email, role) VALUES('$username', '$email', 'user')");
-			$pdo = null;
-			$pdo2 = new PDO("sqlite:MMDataBase.db");
-			$exists = $pdo2->prepare('SELECT UID FROM Users WHERE username=?');
-      $exists->execute([$username]);
-      $userId = $exists->fetchColumn();
-			$pdo2 = null;
-			$pdo3 = new PDO("sqlite:MMDataBase.db");
-			$pdo3->query("INSERT INTO Passwords (UserId, Password) VALUES('$userId', '$password')");
-			$pdo3 = null;
+			$newUserAccountInsertSqlStmt = "INSERT INTO Users (username, email, role) VALUES(?, ?, 'user')";
+			$pdo->prepare($newUserAccountInsertSqlStmt)->execute([$username, $email]);
+
+			$stmt = $pdo->prepare("SELECT UID FROM Users WHERE username=?");
+			$stmt->execute([$username]);
+			$uid = $stmt->fetchColumn();
+
+			$newUserPasswordInsertSqlStmt = "INSERT INTO Passwords (Password, UserId) VALUES(?, ?)";
+			$pdo->prepare($newUserPasswordInsertSqlStmt)->execute([$password, $uid]);
+			
 			echo "Account successfully created";
+
+
+
+			// $pdo = null;
+			// $pdo2 = new PDO("sqlite:MMDataBase.db");
+			// $exists = $pdo2->prepare('SELECT UID FROM Users WHERE username=?');
+      // $exists->execute([$username]);
+      // $userId = $exists->fetchColumn();
+			// $pdo2 = null;
+			// $pdo3 = new PDO("sqlite:MMDataBase.db");
+			// $pdo3->query("INSERT INTO Passwords (UserId, Password) VALUES('$userId', '$password')");
+			// $pdo3 = null;
 		}
 	}
 ?>
