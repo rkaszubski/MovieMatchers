@@ -2,19 +2,19 @@
 	session_start();
 
 	$pdo = new PDO("sqlite:MMDataBase.db");
-	$stmt = $pdo->query("SELECT * FROM Movie");
+	$stmt = $pdo->query("SELECT * FROM Movies");
 	$all = $stmt->fetchall();
-	
-	
+
+
 ?>
 <?php
 	$user = $_SESSION["username"];
 
-	if(isset($_POST['outtitle'])){
+	if(isset($_POST['MovieId'])){
 		echo "here";
-		$title = $_POST['outtitle'];
+		$movieId = $_POST['MovieId'];
 		$pdo = new PDO("sqlite:MMDataBase.db");
-		$pdo->query("INSERT INTO Watchlist VALUES('$user','$title')");
+		$pdo->query("INSERT INTO Watchlist VALUES('$user','$movieId', 0)");
 	}
 ?>
 <html>
@@ -28,13 +28,13 @@
 			<div class=MMatcher>
 				Movie Matchers
 			</div>
-			
+
 			<div class = links>
-				
+
 				<a href="search.php">Search</a>
 				<a href="movie.php">Swipe</a>
 				<a href="profile.php">Profile</a>
-				
+
 			</div>
 		</div>
 		<div class= container>
@@ -54,7 +54,7 @@
 
 				<div class="swipe">
 
-					<button class="button" id="watch" onclick="nextmovie()">Watch</button>
+					<button class="button" id="watch" onclick="watchmovie()">Watch</button>
 				</div>
 
 				<div class="movieinfo">
@@ -66,34 +66,35 @@
 		</div>
 
 	</body>
-	
+
 </html>
 
 <script>
 	var movies = <?php echo json_encode($all)?>;
 	var moviecount = 0;
 	populatemovie();
-	
+
 	function populatemovie(){
-		document.getElementById('poster').src=movies[moviecount]["PosterLink"];
+		document.getElementById("poster").src=movies[moviecount]["Poster"];
 		document.getElementById("title").innerHTML = movies[moviecount]["Title"];
 		document.getElementById("dir").innerHTML = "Director: " + movies[moviecount]["Director"];
-		document.getElementById("year").innerHTML ="Release Year: " + movies[moviecount]["Year"];
+		document.getElementById("year").innerHTML ="Release Year: " + movies[moviecount]["ReleaseYear"];
 		document.getElementById("act").innerHTML = "Actors: " +movies[moviecount]["Actors"];
 	}
-	
-	
+
+
 	function nextmovie(){
 		moviecount = moviecount + 1;
 		populatemovie();
 	}
-	
+
 	function watchmovie(){
 		var movietitle = movies[moviecount]["Title"];
+		var movieIdentity = movies[moviecount]["MID"];
 		$.ajax({
 		type: 'POST',
 		url: 'movie.php',
-		data: {'outtitle': movietitle},
+		data: {'MovieId': movieIdentity},
 		success: function(data)
 		{
 			alert(movietitle + " added to watchlist");
@@ -101,6 +102,5 @@
 		});
 		nextmovie();
 	}
-	
-</script>
 
+</script>
