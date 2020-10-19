@@ -52,20 +52,8 @@ function noSpecialChar($string) {
 
 			$newUserPasswordInsertSqlStmt = "INSERT INTO Passwords (Password, UserId) VALUES(?, ?)";
 			$pdo->prepare($newUserPasswordInsertSqlStmt)->execute([$password, $uid]);
-			
+
 			echo "Account successfully created";
-
-
-
-			// $pdo = null;
-			// $pdo2 = new PDO("sqlite:MMDataBase.db");
-			// $exists = $pdo2->prepare('SELECT UID FROM Users WHERE username=?');
-      // $exists->execute([$username]);
-      // $userId = $exists->fetchColumn();
-			// $pdo2 = null;
-			// $pdo3 = new PDO("sqlite:MMDataBase.db");
-			// $pdo3->query("INSERT INTO Passwords (UserId, Password) VALUES('$userId', '$password')");
-			// $pdo3 = null;
 		}
 	}
 ?>
