@@ -17,7 +17,6 @@
 					<textarea id="subject" name="subject" placeholder="Write something.." style="height:200px"></textarea>
 					<input type="submit" value="Submit" class = action-button></input><br>
 
-					<a href="register.php">Register Now</a>
 					</fieldset>
 				</form>
 			</div>
