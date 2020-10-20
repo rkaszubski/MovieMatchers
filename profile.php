@@ -1,7 +1,7 @@
 <?php
 	session_start();
-	
-	
+
+
 ?>
 <html>
 	<header>
@@ -12,16 +12,25 @@
 		<h2> My Watchlist </h2>
 		<?php
 		$user = $_SESSION["username"];
-	
+		$uid = $_SESSION["UID"];
 		$pdo = new PDO("sqlite:MMDataBase.db");
-		$data = $pdo->query("SELECT movietitle FROM Watchlist WHERE username='$user'")->fetchAll();
-		foreach($data as $row)
+		$sqlUserWatchlistMID = "SELECT MovieId FROM Watchlist WHERE UserId=?";
+		$stmt = $pdo->prepare($sqlUserWatchlistMID);
+		$stmt->execute([$uid]);
+		$userWatchlistMID = $stmt->fetchAll();
+
+		// iterate through all movieId's (MID) and find the according movie titles (or entire object... later) per each MID
+		foreach($userWatchlistMID as $row)
 		{
-			$title = $row["movietitle"];
+			$mid = $row["MovieId"];
+			$sqlMovieTitle = "SELECT Title FROM Movies WHERE MID=?";
+			$stmt2 = $pdo->prepare($sqlMovieTitle);
+			$stmt2->execute([$mid]);
+			$title = $stmt2->fetchColumn();
 			echo "$title<br>";
 		}
 		?>
 	</body>
-	
+
 
 </html>

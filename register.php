@@ -50,11 +50,14 @@ function noSpecialChar($string) {
 			$stmt->execute([$username]);
 			$uid = $stmt->fetchColumn();
 
-			
+
 			$newUserPasswordInsertSqlStmt = "INSERT INTO Passwords (Password, UserId) VALUES(?, ?)";
 			$pdo->prepare($newUserPasswordInsertSqlStmt)->execute([$password, $uid]);
 
 			echo "Account successfully created";
+			header("Location: login.php");
+		} else {
+			echo "error, all fields must be filled";
 		}
 	}
 ?>
