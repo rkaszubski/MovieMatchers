@@ -5,10 +5,7 @@
 	</head>
 
 	<body>
-		<div class="header">
 		<?php include('components/header.php'); ?>
-		</div>
-
 		<div class= container>
 			<div class=overlay>
 				<br><br>
