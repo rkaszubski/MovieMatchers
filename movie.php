@@ -28,19 +28,8 @@
 		<link rel="stylesheet" href="stylesheet.css">
 	</head>
 	<body>
-		<div class = header>
-			<div class=MMatcher>
-				Movie Matchers
-			</div>
+		<?php include('components/header.php'); ?>
 
-			<div class = links>
-
-				<a href="search.php">Search</a>
-				<a href="movie.php">Swipe</a>
-				<a href="profile.php">Profile</a>
-
-			</div>
-		</div>
 		<div class= container>
 			<div class=overlay>
 				<div class="movieinfo">
@@ -68,7 +57,7 @@
 				</div>
 			</div>
 		</div>
-
+		<?php include('components/footer.php'); ?>
 	</body>
 
 </html>

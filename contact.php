@@ -3,23 +3,14 @@
 		<title>Contact Us</title>
 		<link rel="stylesheet" href="stylesheet.css">
 	</head>
-	
+
 	<body>
-		<div class = header>
-			<div class=MMatcher>
-				Movie Matchers
-			</div>
-			
-			<div class = links>
-				
-				<a>Search</a>
-				<a href="">Swipe</a>
-				<a>Profile</a>
-				
-			</div>
+		<div class="header">
+		<?php include('components/header.php'); ?>
 		</div>
+
 		<div class= container>
-			<div class=overlay>	
+			<div class=overlay>
 				<br><br>
 				<form id = msform method="POST" style="width: 700px;">
 					<fieldset>
@@ -33,6 +24,10 @@
 					</fieldset>
 				</form>
 			</div>
+		</div>
+
+		<div id="footer">
+		<?php include('components/footer.php'); ?>
 		</div>
 </body>
 
