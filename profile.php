@@ -6,7 +6,7 @@
 <html>
 	<header>
 		<title>My Profile</title>
-		<link rel="stylesheet" href="stylesheet.css">
+		<link rel="stylesheet" href="css/stylesheet.css">
 		<style>
 			table, th, td {
 			  border: 1px solid black;

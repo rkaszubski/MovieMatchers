@@ -67,7 +67,7 @@ function noSpecialChar($string) {
 
 	<head>
 		<title>Register</title>
-		<link rel="stylesheet" href="stylesheet.css">
+		<link rel="stylesheet" href="css/stylesheet.css">
 	</head>
 
 	<body>
@@ -95,8 +95,4 @@ function noSpecialChar($string) {
 			</div>
 		</div>
 	</body>
-
-
-
-
 </html>

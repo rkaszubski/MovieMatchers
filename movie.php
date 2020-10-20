@@ -25,7 +25,7 @@
 	<head>
 		<SCRIPT SRC="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></SCRIPT>
 		<title>Swipe</title>
-		<link rel="stylesheet" href="stylesheet.css">
+		<link rel="stylesheet" href="css/stylesheet.css">
 	</head>
 	<body>
 		<?php include('components/header.php'); ?>
@@ -42,7 +42,7 @@
 				</div>
 
 				<div class="movieposter">
-					<img id="poster" src="popcorn.jpg" >
+					<img id="poster" src="assets/popcorn.jpg" >
 				</div>
 
 				<div class="swipe">
