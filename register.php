@@ -29,11 +29,11 @@ function noSpecialChar($string) {
 				$usernameErr = "Username must be 4 characters or longer and special Characters are not allowed, please change your username and try again";
 			}
 			//Password check
-			if (noSpecialChar($attPassword) && strlen($attPassword) > 7) {
+			if (noSpecialChar($attPassword) && strlen($attPassword) > 4) {
 				// good input
 				$password = md5(trim($attPassword));
 			} else {
-				$passwordErr = "Password must be 8 characters or longer and special characters are not allowed, please change your password and try again";
+				$passwordErr = "Password must be 5 characters or longer and special characters are not allowed, please change your password and try again";
 			}
 			//Email check
 			if (noSpecialChar($attEmail)) {
@@ -50,6 +50,7 @@ function noSpecialChar($string) {
 			$stmt->execute([$username]);
 			$uid = $stmt->fetchColumn();
 
+			
 			$newUserPasswordInsertSqlStmt = "INSERT INTO Passwords (Password, UserId) VALUES(?, ?)";
 			$pdo->prepare($newUserPasswordInsertSqlStmt)->execute([$password, $uid]);
 

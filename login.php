@@ -1,4 +1,3 @@
-
 <?php
 	function noSpecialChar($string)
 	{
@@ -29,14 +28,17 @@
 				if ($hashPW == $existingHashedPW) {
 						session_start();
 						$_SESSION["username"] = $username;
+						$_SESSION["UID"] = $uid;
 						// How are we getting the role? How should it be set for the session?
 						// $_SESSION["role"] = $row["role"];
 						header("Location: movie.php");
 				}
+			} else {
+				echo "User account does not exist, please try again or register for an account";
 			}
+
 		}
 	}
-		echo "User account does not exist, please try again or register for an account";
 ?>
 
 

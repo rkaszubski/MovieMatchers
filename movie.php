@@ -8,13 +8,13 @@
 
 ?>
 <?php
-	$user = $_SESSION["username"];
+	$uid = $_SESSION["UID"];
 
 	if(isset($_POST['MovieId'])){
 		echo "here";
 		$movieId = $_POST['MovieId'];
 		$pdo = new PDO("sqlite:MMDataBase.db");
-		$pdo->query("INSERT INTO Watchlist VALUES('$user','$movieId', 0)");
+		$pdo->query("INSERT INTO Watchlist VALUES('$uid','$movieId', 0)");
 	}
 ?>
 <html>
