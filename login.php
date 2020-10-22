@@ -51,7 +51,7 @@
 	<body>
 		<div class = header style="font-size:4vw;">
 
-				<center>Movie Matchers</center>
+				<center>Movie Matcher</center>
 		</div>
 		<div class= container>
 			<div class=overlay>
