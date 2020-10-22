@@ -2,10 +2,18 @@
 	session_start();
 
 	$pdo = new PDO("sqlite:MMDataBase.db");
+	
 	$stmt = $pdo->query("SELECT * FROM Movies");
 	$all = $stmt->fetchall();
-
-
+	
+	$countStmt = $pdo->query("SELECT COUNT(MID) FROM Movies");
+	$count = $countStmt->fetch();
+	$count = intval($count[0]);
+	
+	
+	$watchListStmt = $pdo->query("SELECT * FROM Watchlist");
+	$watchListAll = $watchListStmt->fetchAll();
+	print_r($watchListAll);
 ?>
 <?php
 	$userId = $_SESSION["UID"];
@@ -64,7 +72,11 @@
 
 <script>
 	var movies = <?php echo json_encode($all)?>;
-	var moviecount = 0;
+	var watchList = <?php echo json_encode($watchListAll)?>;
+	var clickcount = 0;
+	
+	console.log(movies[moviecount]["MID"])
+	var moviecount = Math.floor(Math.random()* <? echo $count ?>);
 	populatemovie();
 
 	function populatemovie(){
@@ -74,13 +86,28 @@
 		document.getElementById("year").innerHTML ="Release Year: " + movies[moviecount]["ReleaseYear"];
 		document.getElementById("act").innerHTML = "Actors: " +movies[moviecount]["Actors"];
 	}
-
-
-	function nextmovie(){
-		moviecount = moviecount + 1;
-		populatemovie();
+	
+	//Check if movie is already in watchlist
+	function verifyMovie(){
+		var recommend = movies[moviecount]["MID"];
+		var watched = watchList[moviecount]["MovieId"];
+		
+		if(recommend == watched){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
+	//populate next movie
+	function nextmovie(){
+		moviecount = Math.floor(Math.random()* <? echo $count ?>);
+		populatemovie();
+		clickcount = clickcount+1
+		alert(clickcount)
+	}
+
+	//
 	function watchmovie(){
 		var movietitle = movies[moviecount]["Title"];
 		var movieIdentity = movies[moviecount]["MID"];
@@ -95,5 +122,5 @@
 		});
 		nextmovie();
 	}
-
+	//alert((watchList[moviecount]['MovieId']));
 </script>

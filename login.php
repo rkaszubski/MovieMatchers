@@ -59,8 +59,8 @@
 				<form id = msform method="POST">
 					<fieldset>
 					<h2 class="fs-title">Login</h2>
-					<input type="text" placeholder="username" name="username"></input>
-					<input type="password" placeholder="password" name="password"></input>
+					<input type="text" placeholder="username" name="username" required></input>
+					<input type="password" placeholder="password" name="password" required></input>
 					<input type="submit" value="Login" class = action-button></input><br>
 
 					<a href="register.php">Register Now</a>
