@@ -1,23 +1,23 @@
 <?php 
 
 $input_term = $_POST['search'];
-
+ $pdo = new PDO("sqlite:MMDataBase.db");
 
 
 function noSpecialChar($string) {
-	if (preg_match('/[\'^£%&*()}{#~?><>,|=_+¬-]/', $string)) {
+	if (preg_match("/[\'^£%&*()}{#~?><>,|=_+¬-]/", $string)) {
 	    // one or more of the 'special characters' found in $string
 			return false;
 	}
 	return true;
 }
 
-
 function movieExistsInDb($string){
 //Check if searched movie exists in Movie table
 	$pdo = new PDO("sqlite:MMDataBase.db");
 	$movieCheckSqlStmt = "SELECT * FROM Movies where Title = ?";
 	$result = $pdo->prepare($movieCheckSqlStmt)->execute([$string]);
+	
 	
 	if($result > 0){
 		return true;
@@ -29,11 +29,6 @@ function movieExistsInDb($string){
 
 //If movie exists in database
 if(movieExistsInDb($input_term) == true){
-	
-	//$pdo = new PDO("sqlite:MMDataBase.db");
-	//$getMovieInfoSqlStmt ="SELECT Director FROM Movies where Title = ?";
-	//$movieInfo = $pdo->prepare($getMovieInfoSqlStmt)->execute([$input_term]);
-	//echo $movieInfo;
 	echo "The movie is already in here";
 }else{
 	echo "The movie has been added to the Database";
@@ -41,7 +36,7 @@ if(movieExistsInDb($input_term) == true){
 
 
 //if movie does not exist in Database
-if(noSpecialChar($_POST['search']) == true) {
+if(noSpecialChar([$input_term]) == true) {
 	$data = getOmdbRecord("$input_term", "2f79417c");
 	
 //Uncomment following code to see full Json file from OMDB
@@ -78,7 +73,6 @@ function getOmdbRecord($movieName, $ApiKey)
 }
 
 //Inserting into movie table
-$pdo = new PDO("sqlite:MMDataBase.db");
 $newMovieInsertSqlStmt = 
 	"INSERT INTO Movies (Title, Director, Actors, ReleaseYear, Poster, IMDB_score, Rated, Category)
 	VALUES (?,?,?,?,?,?,?,?)";
@@ -94,7 +88,6 @@ $pdo->prepare($newMovieInsertSqlStmt)->execute([$title, $director, $actors, $yea
 </head>
 
 <body>
-
 	<?php include('components/header.php'); ?>
 	<div class= container>
 		<div class=overlay>
@@ -102,17 +95,15 @@ $pdo->prepare($newMovieInsertSqlStmt)->execute([$title, $director, $actors, $yea
 				<img style="height: 600px; padding:3%; background-color:white; width: 400px;" src='<? echo $poster ?>'>
 			</div>
 			<div style="float: left; padding-left:3%; color:#f5f5f5">
-
 					<h1>Title: <?= $title ?></h1><br>
 					<h3>Director: <?= $director ?></h3><br>
 					<h3>Imdb Score: <?= $imdbRating ?></h3><br>
 					<h3>Actors: <?= $actors ?> </h3><br>
 					<h3>Genre: <?= $category ?></h3><br>
 					<h3>Rated: <?= $rated ?></h3><br>
-
 			</div>
+		</div>
 	</div>
-</div>
 <?php include('components/footer.php'); ?>
 </body>
 </html>
