@@ -23,6 +23,8 @@ function movieExistsInDb($string){
 	$stmt->bindParam(':string',$string);
 	$stmt->execute();
 	$result = $stmt->fetchAll();
+	
+	//if number of found records is less than 1
 	if(count($result) > 0){
 		return true;
 	}
@@ -53,9 +55,11 @@ function populateMovie($string){
 //		echo '<h1> Raw data </h1>';
 //		var_dump($data);
 //		echo '<br><br>';
+	
+//	if movie was not found redirect to search page
 	if(count($data) < 3){
 		
-		header('Location: http://localhost:8080/search.php');
+		header('Location: http://localhost:8080/search.php');// replace with hosted URL
 		exit();
 	}
 	else{
@@ -77,15 +81,17 @@ function populateMovie($string){
 function populateMovieAdd($string){
 	//if movie does not exist in Database
 	$data = getOmdbRecord("$string", "2f79417c");
-
+	global $pdo;
 	global $title,$director,$actors,$year,$imdbRating,$category,$poster,$rated,$plot;
-	//Uncomment following code to see full Json file from OMDB
+//	Uncomment following code to see full Json file from OMDB
 //		echo '<h1> Raw data </h1>';
 //		var_dump($data);
 //		echo '<br><br>';
+//	
+	//if movie was not found redirect to search page
 	if(count($data) < 3){
 		
-		header('Location: http://localhost:8080/search.php');
+		header('Location: http://localhost:8080/search.php');// replace with hosted URL
 		exit();
 	}
 	else{
@@ -101,26 +107,23 @@ function populateMovieAdd($string){
 		 $poster = $data["Poster"];
 		 $rated = $data["Rated"];
 		 $plot = $data["Plot"];
+
 		
-//		 $newMovieInsertSqlStmt = "INSERT INTO Movies (Title, Director, Actors, ReleaseYear, Poster, IMDB_score, Rated, Category) VALUES (?,?,?,?,?,?,?,?)";
-//
-//		 $pdo->prepare($newMovieInsertSqlStmt)->execute([$title, $director, $actors, $year, $poster, $imdbRating, $rated, $category]);
+		 $newMovieInsertSqlStmt = "INSERT INTO Movies (Title, Director, Actors, ReleaseYear, Poster, IMDB_score, Rated, Category) VALUES (?,?,?,?,?,?,?,?)";
+		
+		 $pdo->prepare($newMovieInsertSqlStmt)->execute([$title, $director, $actors, $year, $poster, $imdbRating, $rated, $category]);
 	}
 }
-
-//if(noSpecialChar($input_term) == true){
-//	header('Location: http://localhost:8080/search.php');
-//	exit();
-//}
-//	
-
-if(movieExistsInDb($input_term) == true){
-		populateMovie($input_term);
+if(noSpecialChar($input_term) == true){
+	if(movieExistsInDb($input_term) == true){
+			populateMovie($input_term);
+	}else{
+		populateMovieAdd($input_term);
+	}
 }else{
-	echo 'not in db';
-	populateMovieAdd($input_term);
+	header('Location: http://localhost:8080/search.php');// replace with hosted URL
+	exit();
 }
-	
 	
 ?>
 <html>
