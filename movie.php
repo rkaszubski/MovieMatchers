@@ -42,6 +42,7 @@
 		<SCRIPT SRC="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></SCRIPT>
 		<title>Swipe</title>
 		<link rel="stylesheet" href="css/stylesheet.css">
+    <link rel="icon" href="assets/favicon/favicon.ico">
 	</head>
 	<body>
 		<?php include('components/header.php'); ?>

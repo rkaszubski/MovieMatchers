@@ -46,12 +46,12 @@
 
 		<title>Login</title>
 		<link rel="stylesheet" href="css/stylesheet.css">
+		<link rel="icon" href="assets/favicon/favicon.ico">
 	</head>
 
 	<body>
 		<div class = header style="font-size:4vw;">
-
-				<center>Movie Matcher</center>
+			<img src="assets/MMHeader2.png">
 		</div>
 		<div class= container>
 			<div class=overlay>
