@@ -16,16 +16,19 @@ body {
 
 /* Site Title */
 .titlepic{
-    padding-top: 1.5%;
     padding-left: 0.5%;
     float:left;
     width: 60%;
     height: 100%;
 }
+.titlepic img{
+	height: 100%;
+	width: 100%;
+}
 
 .header img{
     max-height: 100%;
-    width: 60%;
+    width: 100%;
 }
 
 /*Menu Links*/
@@ -36,15 +39,22 @@ body {
 	text-align: center;
 	font-family:sans-serif;
 	color: #f5f5f5;
+	position: relative;
+	top: 50%;
 	padding-left: 5%;
-	padding-top: 3.5%;
+
+
 }
 .links a{
+	margin-top:40%;
+	vertical-align: middle;
 	padding-left: 2%;
 	color: #f5f5f5;
 	text-align: center;
-	padding-top: 50%;
 	text-decoration: none;
+}
+.links a:hover{
+	text-decoration:underline;
 
 }
 

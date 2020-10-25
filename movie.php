@@ -48,6 +48,7 @@
 		<?php include('components/header.php'); ?>
 		<div class= container>
 			<div class=overlay>
+        <br><br>
 				<div class="movieinfo">
 					<h1 id="title">Movie Title</h1>
 				</div>
