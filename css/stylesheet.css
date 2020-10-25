@@ -7,34 +7,36 @@ body {
 
 /*Header with site title ad menu links*/
 .header{
-	height: 15%;
-	background-color: #4d0013;
-	text-align: center;
-	padding-top: 6px;
-	color: #f5f5f5;
+    height: 15%;
+    background-color: #4d0013;
+    text-align: center;
+    color: #f5f5f5;
 }
 
 /* Site Title */
-.MMatcher{
-	float: left;
-	padding: 1%;
-	width: 45%;
-	text-align: center;
-	color: #f5f5f5;
-	font-family:sans-serif;
-	font-size: 4vw;
+.titlepic{
+    padding-top: 1.5%;
+    padding-left: 0.5%;
+    float:left;
+    width: 60%;
+    height: 100%;
+}
+
+.header img{
+    max-height: 100%;
+    width: 60%;
 }
 
 /*Menu Links*/
 .links{
 	float: left;
-	width: 45%;
+	width: 30%;
 	height: 100%;
 	text-align: center;
 	font-family:sans-serif;
 	color: #f5f5f5;
-	padding-top: 3%;
 	padding-left: 5%;
+	padding-top: 3.5%;
 
 }
 .links a{
@@ -199,11 +201,12 @@ body {
 	height: 60%;
 	width: 25%;;
 }
-.movieposter img{
 
+.movieposter img{
 	height: 100%;
 	width: 100%;
 }
+
 table, th, td {
 	border: 1px solid black;
 	border-collapse: collapse;

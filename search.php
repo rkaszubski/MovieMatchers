@@ -2,6 +2,7 @@
 	<head>
 		<title>Search</title>
 		<link rel="stylesheet" href="css/stylesheet.css">
+		<link rel="icon" href="assets/favicon/favicon.ico">
 	</head>
 	<body>
 		<?php include('components/header.php'); ?>

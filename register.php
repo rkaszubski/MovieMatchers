@@ -68,13 +68,13 @@ function noSpecialChar($string) {
 	<head>
 		<title>Register</title>
 		<link rel="stylesheet" href="css/stylesheet.css">
+		<link rel="icon" href="assets/favicon/favicon.ico">
 	</head>
 
 	<body>
 		<body>
 		<div class = header style="font-size:4vw;">
-
-				<center>Movie Matchers</center>
+			<img src="assets/MMHeader2.png">
 		</div>
 		<div class= container>
 			<div class=overlay>
@@ -86,13 +86,11 @@ function noSpecialChar($string) {
 					<input type="email" placeholder="email" name="email"></input><br><br>
 					<input type="password" placeholder="password" name="password"></input><br><br>
 					<input type="submit" value="Create Account" class = action-button></input><br>
-
 					<a href="index.php">Log In</a>
 					</fieldset>
 				</form>
-
-
 			</div>
 		</div>
+		<?php include('components/footer.php'); ?>
 	</body>
 </html>

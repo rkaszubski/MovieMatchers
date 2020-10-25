@@ -128,7 +128,8 @@ if(noSpecialChar($input_term) == true){
 ?>
 <html>
 <head>
-    <link rel="stylesheet" href="css/stylesheet.css">
+	<link rel="stylesheet" href="css/stylesheet.css">
+	<link rel="icon" href="assets/favicon/favicon.ico">
 	<title></title>
 </head>
 
