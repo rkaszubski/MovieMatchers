@@ -4,6 +4,7 @@ if (!isset($_SESSION["UID"]))
 {
 		header("Location: login.php");
 }
+//test
 $userId = $_SESSION["UID"];
 $title = $director = $actors = $category = $poster = $rated = $plot = "";
 $year = 0;

@@ -4,7 +4,7 @@
   	{
   			header("Location: login.php");
   	}
-    
+    //test
     // Initialize PDO Object
     $pdo = new PDO("sqlite:MMDataBase.db");
 

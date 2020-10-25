@@ -4,7 +4,7 @@
 	{
 			header("Location: login.php");
 	}
-
+//test
 	$user = $_SESSION["username"];
 	$uid = $_SESSION["UID"];
 	$pdo = new PDO("sqlite:MMDataBase.db");
