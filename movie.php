@@ -1,11 +1,10 @@
 <?php
     session_start();
     if (!isset($_SESSION["UID"]))
-    {
-        echo "<h1>User is not logged in, redirecting to login page</h1>";
-        usleep(2000000);
-        header("Location: login.php");
-    }
+  	{
+  			header("Location: login.php");
+  	}
+    
     // Initialize PDO Object
     $pdo = new PDO("sqlite:MMDataBase.db");
 
@@ -29,7 +28,7 @@
 		$sql = "INSERT INTO Watchlist VALUES(?, ?, 0)";
 		$insertStmt = $pdo->prepare($sql);
         $insertStmt->execute([$userId, $movieId]);
-        
+
         $stmtFill = $pdo->query($sqlFilteredMovies);
         $all = $stmtFill->fetchall();
         // foreach($all as $result) {

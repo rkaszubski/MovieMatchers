@@ -1,5 +1,9 @@
 <?php
 	session_start();
+	if (!isset($_SESSION["UID"]))
+	{
+			header("Location: login.php");
+	}
 
 	$user = $_SESSION["username"];
 	$uid = $_SESSION["UID"];
