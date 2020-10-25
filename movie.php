@@ -28,40 +28,36 @@
 		$pdo = new PDO("sqlite:MMDataBase.db");
 		$sql = "INSERT INTO Watchlist VALUES(?, ?, 0)";
 		$insertStmt = $pdo->prepare($sql);
-        $insertStmt->execute([$userId, $movieId]);
+    $insertStmt->execute([$userId, $movieId]);
 
-        $stmtFill = $pdo->query($sqlFilteredMovies);
-        $all = $stmtFill->fetchall();
-        // foreach($all as $result) {
-        //     echo $result["MovieId"], "<br>";
-        // }
-
+    $stmtFill = $pdo->query($sqlFilteredMovies);
+    $all = $stmtFill->fetchall();
 	}
 ?>
 <html>
 	<head>
 		<SCRIPT SRC="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></SCRIPT>
 		<title>Swipe</title>
-		<link rel="stylesheet" href="css/stylesheet.css">
+		<link rel="stylesheet" href="css/movie.css">
     <link rel="icon" href="assets/favicon/favicon.ico">
 	</head>
 	<body>
-		<?php include('components/header.php'); ?>
+		<!-- <?php // include('components/header.php'); ?> -->
 		<div class= container>
 			<div class=overlay>
-				<div class="movieinfo">
+				<div class="movietitle">
 					<h1 id="title">Movie Title</h1>
 				</div>
 				<div class="swipe">
+          <div class="pcontainer">
+					       <button class="button" id="pass" onclick="nextmovie()">Pass</button>
+          </div>
+          <img id="poster" src="assets/popcorn.jpg" >
+          <div class="wcontainer">
+					       <button class="button" id="watch" onclick="watchmovie()">Watch</button>
+          </div>
+				</div>
 
-					<button class="button" id="pass" onclick="nextmovie()">Pass</button>
-				</div>
-				<div class="movieposter">
-					<img id="poster" src="assets/popcorn.jpg" >
-				</div>
-				<div class="swipe">
-					<button class="button" id="watch" onclick="watchmovie()">Watch</button>
-				</div>
 				<div class="movieinfo">
 					<h2 id="dir">Director</h2>
 					<h2 id="year">Release Year</h2>
@@ -69,7 +65,7 @@
 				</div>
 			</div>
 		</div>
-		<?php include('components/footer.php'); ?>
+		<?php // include('components/footer.php'); ?>
 	</body>
 </html>
 
