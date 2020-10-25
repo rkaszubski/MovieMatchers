@@ -1,20 +1,25 @@
 <?php
-	session_start();
+    session_start();
+    if (!isset($_SESSION["UID"]))
+    {
+        echo "<h1>User is not logged in, redirecting to login page</h1>";
+        usleep(2000000);
+        header("Location: login.php");
+    }
+    // Initialize PDO Object
+    $pdo = new PDO("sqlite:MMDataBase.db");
 
-	$pdo = new PDO("sqlite:MMDataBase.db");
-	
-	$stmt = $pdo->query("SELECT * FROM Movies");
-	$all = $stmt->fetchall();
-	
-	$countStmt = $pdo->query("SELECT COUNT(MID) FROM Movies");
-	$count = $countStmt->fetch();
-	$count = intval($count[0]);
-	
-	$watchListStmt = $pdo->query("SELECT * FROM Watchlist");
-	$watchListAll = $watchListStmt->fetchAll();
-	
+    $userId = $_SESSION["UID"];
+    $sqlWatchedMovies = "SELECT MovieId FROM Watchlist WHERE UserId=$userId";
+    $sqlFilteredMovies = "SELECT * FROM Movies WHERE MID NOT IN ($sqlWatchedMovies)";
+    $stmtFill = $pdo->query($sqlFilteredMovies);
+    $all = $stmtFill->fetchall();
 ?>
 <?php
+    // This chuck of PHP code adds a movie to the users watchlist if the MovieId is set (if it is clicked)
+    // since "$userId" is defined in the first PHP code chunk, can we omit this variable declaration (below)?
+
+    // movies that are watched need to update the fetchAll "$all" variable with innerjoin in watchlist (movie innerjoin watchlist)
 	$userId = $_SESSION["UID"];
 
 	if(isset($_POST['MovieId'])){
@@ -23,9 +28,14 @@
 		$pdo = new PDO("sqlite:MMDataBase.db");
 		$sql = "INSERT INTO Watchlist VALUES(?, ?, 0)";
 		$insertStmt = $pdo->prepare($sql);
-		$insertStmt->execute([$userId, $movieId]);
+        $insertStmt->execute([$userId, $movieId]);
+        
+        $stmtFill = $pdo->query($sqlFilteredMovies);
+        $all = $stmtFill->fetchall();
+        // foreach($all as $result) {
+        //     echo $result["MovieId"], "<br>";
+        // }
 
-		// $pdo->query("INSERT INTO Watchlist VALUES('$userId','$movieId', 0)");
 	}
 ?>
 <html>
@@ -36,27 +46,21 @@
 	</head>
 	<body>
 		<?php include('components/header.php'); ?>
-
 		<div class= container>
 			<div class=overlay>
 				<div class="movieinfo">
 					<h1 id="title">Movie Title</h1>
 				</div>
-
 				<div class="swipe">
 
 					<button class="button" id="pass" onclick="nextmovie()">Pass</button>
 				</div>
-
 				<div class="movieposter">
 					<img id="poster" src="assets/popcorn.jpg" >
 				</div>
-
 				<div class="swipe">
-
 					<button class="button" id="watch" onclick="watchmovie()">Watch</button>
 				</div>
-
 				<div class="movieinfo">
 					<h2 id="dir">Director</h2>
 					<h2 id="year">Release Year</h2>
@@ -66,16 +70,11 @@
 		</div>
 		<?php include('components/footer.php'); ?>
 	</body>
-
 </html>
 
 <script>
 	var movies = <?php echo json_encode($all)?>;
-	//var watchList = <?php echo json_encode($watchListAll)?>;
-	var clickcount = 0;
-	
-	//console.log(movies[moviecount]["MID"])
-	var moviecount = Math.floor(Math.random(1)* <? echo $count ?>);
+	var moviecount = 0;
 	populatemovie();
 
 	function populatemovie(){
@@ -85,28 +84,13 @@
 		document.getElementById("year").innerHTML ="Release Year: " + movies[moviecount]["ReleaseYear"];
 		document.getElementById("act").innerHTML = "Actors: " +movies[moviecount]["Actors"];
 	}
-	
-	//Check if movie is already in watchlist
-//	function verifyMovie(){
-//		var recommend = movies[moviecount]["MID"];
-//		var watched = watchList[moviecount]["MovieId"];
-//		
-//		if(recommend == watched){
-//			return true;
-//		}else{
-//			return false;
-//		}
-//	}
 
-	//populate next movie
+
 	function nextmovie(){
-		moviecount = Math.floor(Math.random()* <? echo $count ?>);
+		moviecount = moviecount + 1;
 		populatemovie();
-		//clickcount = clickcount+1
-		//alert(clickcount +" "+ movies[moviecount]["MID"] +' '+watchList[moviecount]["MovieId"] )
 	}
 
-	//
 	function watchmovie(){
 		var movietitle = movies[moviecount]["Title"];
 		var movieIdentity = movies[moviecount]["MID"];
@@ -121,5 +105,5 @@
 		});
 		nextmovie();
 	}
-	//alert((watchList[moviecount]['MovieId']));
+
 </script>
