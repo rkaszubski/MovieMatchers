@@ -1,13 +1,25 @@
 <?php
-	session_start();
+    session_start();
+    if (!isset($_SESSION["UID"]))
+    {
+        echo "<h1>User is not logged in, redirecting to login page</h1>";
+        usleep(2000000);
+        header("Location: login.php");
+    }
+    // Initialize PDO Object
+    $pdo = new PDO("sqlite:MMDataBase.db");
 
-	$pdo = new PDO("sqlite:MMDataBase.db");
-	$stmt = $pdo->query("SELECT * FROM Movies");
-	$all = $stmt->fetchall();
-
-
+    $userId = $_SESSION["UID"];
+    $sqlWatchedMovies = "SELECT MovieId FROM Watchlist WHERE UserId=$userId";
+    $sqlFilteredMovies = "SELECT * FROM Movies WHERE MID NOT IN ($sqlWatchedMovies)";
+    $stmtFill = $pdo->query($sqlFilteredMovies);
+    $all = $stmtFill->fetchall();
 ?>
 <?php
+    // This chuck of PHP code adds a movie to the users watchlist if the MovieId is set (if it is clicked)
+    // since "$userId" is defined in the first PHP code chunk, can we omit this variable declaration (below)?
+
+    // movies that are watched need to update the fetchAll "$all" variable with innerjoin in watchlist (movie innerjoin watchlist)
 	$userId = $_SESSION["UID"];
 
 	if(isset($_POST['MovieId'])){
@@ -16,9 +28,14 @@
 		$pdo = new PDO("sqlite:MMDataBase.db");
 		$sql = "INSERT INTO Watchlist VALUES(?, ?, 0)";
 		$insertStmt = $pdo->prepare($sql);
-		$insertStmt->execute([$userId, $movieId]);
+        $insertStmt->execute([$userId, $movieId]);
+        
+        $stmtFill = $pdo->query($sqlFilteredMovies);
+        $all = $stmtFill->fetchall();
+        // foreach($all as $result) {
+        //     echo $result["MovieId"], "<br>";
+        // }
 
-		// $pdo->query("INSERT INTO Watchlist VALUES('$userId','$movieId', 0)");
 	}
 ?>
 <html>
@@ -29,27 +46,21 @@
 	</head>
 	<body>
 		<?php include('components/header.php'); ?>
-
 		<div class= container>
 			<div class=overlay>
 				<div class="movieinfo">
 					<h1 id="title">Movie Title</h1>
 				</div>
-
 				<div class="swipe">
 
 					<button class="button" id="pass" onclick="nextmovie()">Pass</button>
 				</div>
-
 				<div class="movieposter">
 					<img id="poster" src="assets/popcorn.jpg" >
 				</div>
-
 				<div class="swipe">
-
 					<button class="button" id="watch" onclick="watchmovie()">Watch</button>
 				</div>
-
 				<div class="movieinfo">
 					<h2 id="dir">Director</h2>
 					<h2 id="year">Release Year</h2>
@@ -59,7 +70,6 @@
 		</div>
 		<?php include('components/footer.php'); ?>
 	</body>
-
 </html>
 
 <script>

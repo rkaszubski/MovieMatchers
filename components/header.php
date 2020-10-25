@@ -15,6 +15,7 @@
 			<a href="movie.php">Swipe</a>
 			<a href="profile.php">Profile</a>
 			<a href="contact.php">Contact Us</a>
+			<a href="logout.php">Log Out</a>
 		</div>
 
 	</div>
