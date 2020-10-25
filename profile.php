@@ -4,6 +4,8 @@
 	{
 			header("Location: login.php");
 	}
+	$user = $_SESSION["username"];
+	$uid = $_SESSION["UID"];
 //test
 	$user = $_SESSION["username"];
 	$uid = $_SESSION["UID"];
@@ -26,7 +28,7 @@
 				<center><h1 style="border-bottom:1px; border-bottom-style:solid;color:white;"><?= $user ?>'s Watchlist</h1></center>
 				<br>
 				<div class= watchlist style="height:80%; width:90%;margin-left:10%; margin-right:5%; ">
-						<?
+						<?php
 							// iterate through all movieId's (MID) and find the according movie titles (or entire object... later) per each MID
 							foreach($userWatchlistMID as $row)
 							{
@@ -45,7 +47,6 @@
 												<h3 style = 'color:white;'>$title<h3>
 										</center>
 								</div>";
-
 						}
 						?>
 					</div>
