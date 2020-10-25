@@ -1,3 +1,12 @@
+<?php
+    session_start();
+    if (!isset($_SESSION["UID"]))
+    {
+				header("Location: login.php");
+    }
+		//test
+?>
+
 <html>
 	<head>
 		<title>Search</title>
@@ -6,9 +15,9 @@
 	</head>
 	<body>
 		<?php include('components/header.php'); ?>
-
 		<div class= container>
 			<div class=overlay>
+				<br><br>
 				<center><h1 style="color:white;">Search</h1>
 				<form method="post" action="searchbar.php">
 					<input type="text" placeholder="Enter a movie title..." name ="search" style="width: 30%; height:3%; padding:1%;" required>
@@ -19,6 +28,4 @@
 		</div>
 		<?php include('components/footer.php'); ?>
 	</body>
-
-
 </html>

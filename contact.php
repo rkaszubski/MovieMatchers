@@ -1,3 +1,12 @@
+<?php
+session_start();
+if (!isset($_SESSION["UID"]))
+{
+		header("Location: login.php");
+}
+//test
+//test
+?>
 <html>
 	<head>
 		<title>Contact Us</title>

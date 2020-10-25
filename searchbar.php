@@ -1,5 +1,11 @@
 <?php
-
+session_start();
+if (!isset($_SESSION["UID"]))
+{
+		header("Location: login.php");
+}
+//test
+$userId = $_SESSION["UID"];
 $title = $director = $actors = $category = $poster = $rated = $plot = "";
 $year = 0;
 $imdbRating = 0.0;
@@ -23,7 +29,7 @@ function movieExistsInDb($string){
 	$stmt->bindParam(':string',$string);
 	$stmt->execute();
 	$result = $stmt->fetchAll();
-	
+
 	//if number of found records is less than 1
 	if(count($result) > 0){
 		return true;
@@ -55,10 +61,10 @@ function populateMovie($string){
 //		echo '<h1> Raw data </h1>';
 //		var_dump($data);
 //		echo '<br><br>';
-	
+
 //	if movie was not found redirect to search page
 	if(count($data) < 3){
-		
+
 		header('Location: http://localhost:8080/search.php');// replace with hosted URL
 		exit();
 	}
@@ -87,10 +93,10 @@ function populateMovieAdd($string){
 //		echo '<h1> Raw data </h1>';
 //		var_dump($data);
 //		echo '<br><br>';
-//	
+//
 	//if movie was not found redirect to search page
 	if(count($data) < 3){
-		
+
 		header('Location: http://localhost:8080/search.php');// replace with hosted URL
 		exit();
 	}
@@ -108,9 +114,9 @@ function populateMovieAdd($string){
 		 $rated = $data["Rated"];
 		 $plot = $data["Plot"];
 
-		
+
 		 $newMovieInsertSqlStmt = "INSERT INTO Movies (Title, Director, Actors, ReleaseYear, Poster, IMDB_score, Rated, Category) VALUES (?,?,?,?,?,?,?,?)";
-		
+
 		 $pdo->prepare($newMovieInsertSqlStmt)->execute([$title, $director, $actors, $year, $poster, $imdbRating, $rated, $category]);
 	}
 }
@@ -124,7 +130,7 @@ if(noSpecialChar($input_term) == true){
 	header('Location: http://localhost:8080/search.php');// replace with hosted URL
 	exit();
 }
-	
+
 ?>
 <html>
 <head>
@@ -137,10 +143,11 @@ if(noSpecialChar($input_term) == true){
 	<?php include('components/header.php'); ?>
 	<div class= container>
 		<div class=overlay>
+			<br><br>
 			<div style="float: left; margin-left: 10%;">
 				<img style="height: 600px; padding:3%; background-color:white; width: 400px;" src='<? echo $poster ?>'>
 			</div>
-			<div style="float: left; padding-left:4%; color:#f5f5f5; width:700px;">
+			<div style="float: left; padding-left:4%; color:#f5f5f5; width:60%; float-right:none;">
 					<h1>Title: <?= $title ?></h1><br>
 					<h3>Director: <?= $director ?></h3><br>
 					<h3>Year: <?= $year ?> </h3><br>
@@ -150,6 +157,11 @@ if(noSpecialChar($input_term) == true){
 					<h3>Rated: <?= $rated ?></h3><br>
 					<h3>Plot:</h3>
 					<p><?= $plot ?></p>
+			</div>
+			<div class="addtowtchlist" style="width:100%; float:left; height:5%;">
+				<form method="add">
+					<center><button type= "submit" name="button1" style="padding: 10px;">Add To Watchlist</button></center>
+				</form>
 			</div>
 		</div>
 	</div>
