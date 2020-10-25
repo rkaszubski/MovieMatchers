@@ -1,6 +1,13 @@
 <?php
 	session_start();
 
+	$user = $_SESSION["username"];
+	$uid = $_SESSION["UID"];
+	$pdo = new PDO("sqlite:MMDataBase.db");
+	$sqlUserWatchlistMID = "SELECT MovieId FROM Watchlist WHERE UserId=?";
+	$stmt = $pdo->prepare($sqlUserWatchlistMID);
+	$stmt->execute([$uid]);
+	$userWatchlistMID = $stmt->fetchAll();
 ?>
 <html>
 	<head>
@@ -10,41 +17,37 @@
 	<body>
 		<?php include('components/header.php'); ?>
 		<div class= container>
+			<div class = overlay style=" overflow:scroll; overflow-x:hidden; padding-right:10%;">
+				<br>
+				<center><h1 style="border-bottom:1px; border-bottom-style:solid;color:white;"><?= $user ?>'s Watchlist</h1></center>
+				<br>
+				<div class= watchlist style="height:80%; width:90%;margin-left:10%; margin-right:5%; ">
+						<?
+							// iterate through all movieId's (MID) and find the according movie titles (or entire object... later) per each MID
+							foreach($userWatchlistMID as $row)
+							{
+								$mid = $row["MovieId"];
+								$sqlMovieTitle = "SELECT Title, Director, Poster FROM Movies WHERE MID=?";
+								$stmt2 = $pdo->prepare($sqlMovieTitle);
+								$stmt2->execute([$mid]);
+								$data = $stmt2->fetch();
+								$title = $data["Title"];
+								$director = $data["Director"];
+								$poster = $data["Poster"];
+							  echo"<div class = movie style='width:300px; height:500px; margin-top:1%; float:left; margin-left: 3%; border:1px;'>
+										<img src = '$poster' style='width:100%;height:90%; padding:2px; background-color:white;'>
+										<br>
+										<center>
+												<h3 style = 'color:white;'>$title<h3>
+										</center>
+								</div>";
 
-				<table class="centerTB" style="width:70%">
-					<caption><h1><?php echo $_SESSION["username"]?>'s</h1><h2> My Watchlist </h2></caption>
-				  <tr>
-				    <th>Movie Title</th>
-				    <th>Director</th
-				  </tr>
-					<?php
-					$user = $_SESSION["username"];
-					$uid = $_SESSION["UID"];
-					$pdo = new PDO("sqlite:MMDataBase.db");
-					$sqlUserWatchlistMID = "SELECT MovieId FROM Watchlist WHERE UserId=?";
-					$stmt = $pdo->prepare($sqlUserWatchlistMID);
-					$stmt->execute([$uid]);
-					$userWatchlistMID = $stmt->fetchAll();
-
-					// iterate through all movieId's (MID) and find the according movie titles (or entire object... later) per each MID
-					foreach($userWatchlistMID as $row)
-					{
-						echo "<tr>";
-						$mid = $row["MovieId"];
-						$sqlMovieTitle = "SELECT Title, Director FROM Movies WHERE MID=?";
-						$stmt2 = $pdo->prepare($sqlMovieTitle);
-						$stmt2->execute([$mid]);
-						$data = $stmt2->fetch();
-						$title = $data["Title"];
-						$director = $data["Director"];
-						echo "<td> $title </td>";
-						echo "<td> $director </td>";
-						echo "</tr>";
-					}
-					?>
-				</table>
-		</div>
-		<?php include('components/footer.php'); ?>
+						}
+						?>
+					</div>
+			</div>
+		<div>
+			<?php include('components/footer.php'); ?>
 	</body>
 
 
