@@ -75,7 +75,7 @@ function noSpecialChar($string) {
 	<body>
 		<body>
 		<div class="header" style="font-size:4vw;">
-			<img src="assets/MMHeader2.png">
+			<img src="assets/MMHeader2.png" style="width:60%">
 		</div>
 		<div class="container">
 			<div class="overlay">
