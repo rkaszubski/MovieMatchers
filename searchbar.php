@@ -160,7 +160,7 @@ if(noSpecialChar($input_term) == true){
 			</div>
 			<div class="addtowtchlist" style="width:100%; float:left; height:5%;">
 				<form method="add">
-					<center><button type= "submit" name="button1" style="padding: 10px;">Add To Watchlist</button></center>
+					<center><button type= "submit" id="watch" name="button1" style="padding: 10px; "onclick="watchmovie()">Add To Watchlist</button></center>
 				</form>
 			</div>
 		</div>
@@ -168,3 +168,18 @@ if(noSpecialChar($input_term) == true){
 <?php include('components/footer.php'); ?>
 </body>
 </html>
+<script>
+function watchmovie(){
+		var movietitle = movies[moviecount]["Title"];
+		var movieIdentity = movies[moviecount]["MID"];
+		$.ajax({
+		type: 'POST',
+		url: 'searchbar.php',
+		data: {'MovieId': movieIdentity},
+		success: function(data)
+		{
+			alert(movietitle + " added to watchlist");
+		}
+		});
+	}
+</script>
