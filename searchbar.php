@@ -135,6 +135,7 @@ if(noSpecialChar($input_term) == true){
 <html>
 <head>
 	<link rel="stylesheet" href="css/stylesheet.css">
+	<link rel="stylesheet" href="css/searchbar.css">
 	<link rel="icon" href="assets/favicon/favicon.ico">
 	<title></title>
 </head>
@@ -145,10 +146,10 @@ if(noSpecialChar($input_term) == true){
 		<div class=overlay>
 			<br><br>
 			<div style="float: left; margin-left: 10%;">
-				<img style="height: 600px; padding:3%; background-color:white; width: 400px;" src='<? echo $poster ?>'>
+				<img style="height: 600px; padding:3%; background-color:white; width: 400px;" src="<?php echo $poster ?>">
 			</div>
 			<div style="float: left; padding-left:4%; color:#f5f5f5; width:60%; float-right:none;">
-					<h1>Title: <?= $title ?></h1><br>
+					<h1><?= $display = ($title != null) ? $title : "Title: "; ?></h1><br>
 					<h3>Director: <?= $director ?></h3><br>
 					<h3>Year: <?= $year ?> </h3><br>
 					<h3>Imdb Score: <?= $imdbRating ?></h3><br>

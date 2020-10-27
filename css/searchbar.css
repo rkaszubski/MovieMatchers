@@ -1,0 +1,19 @@
+.search-movie {
+	float: left;
+	margin-left: 10%;
+}
+
+.search-movie img {
+	height: 600px;
+	padding:3%;
+	background-color:white;
+	width: 400px;
+}
+
+.movie-info{
+	float: left;
+	padding-left:4%;
+	color:#f5f5f5;
+	width:60%;
+	float-right:none;
+}
