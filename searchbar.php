@@ -121,6 +121,73 @@ function populateMovieAdd($string){
 		 $pdo->prepare($newMovieInsertSqlStmt)->execute([$title, $director, $actors, $year, $poster, $imdbRating, $rated, $category]);
 	}
 }
+function handlescores($string){
+	$uid = $_SESSION["UID"];
+	
+	$uid = intval($uid);
+	$searched = $string;
+	$pdo = new PDO("sqlite:MMDataBase.db");
+	$movieCheckSqlStmt = "SELECT * FROM Movies WHERE Title LIKE :string ";
+	$stmt = $pdo->prepare($movieCheckSqlStmt);
+	$stmt->bindParam(':string',$searched);
+	$stmt->execute();
+	$data = $stmt->fetchAll();
+	$searchedMovieCategories = $data[0]["Category"];
+	$searchedMovieCategories = explode(',', $searchedMovieCategories);
+	
+  // echo '<br>';
+  // var_dump($uid);
+
+
+  foreach ($searchedMovieCategories as $category) {
+      if(categoryExists($category) == false){
+          $pdo = new PDO("sqlite:MMDataBase.db");
+          $categoryCheckSqlStmt = "INSERT INTO Scores (UserId,CategoryName,Score) VALUES (?,?,100)";
+          $stmt = $pdo->prepare($categoryCheckSqlStmt);
+          $stmt->execute([$uid,$category]);
+}else{
+
+          $pdo = new PDO("sqlite:MMDataBase.db");
+        	$getExistingRowsSqlStmt = "SELECT * FROM Scores WHERE CategoryName = :string";
+        	$stmt = $pdo->prepare($getExistingRowsSqlStmt);
+
+          $stmt->bindParam(':string', $category);
+        	$stmt->execute();
+        	$data = $stmt->fetchAll();
+          $score = intval($data[0]['Score']);
+          $score = $score + 5;
+
+          $pdo = new PDO("sqlite:MMDataBase.db");
+          $categoryCheckSqlStmt = "UPDATE Scores SET Score = :score WHERE UserId= :uid AND CategoryName= :category";
+          $stmt = $pdo->prepare($categoryCheckSqlStmt);
+          $stmt->bindParam(":score", $score);
+          $stmt->bindParam(':uid',$uid);
+          $stmt->bindParam(":category",$category);
+          $stmt->execute();
+  }
+}
+}
+function categoryExists($string){
+    $uid = $_SESSION["UID"];
+	
+	$uid = intval($uid);
+  //Check if searched movie exists in Movie table
+  	$pdo = new PDO("sqlite:MMDataBase.db");
+  	$movieCheckSqlStmt = "SELECT * FROM Scores WHERE CategoryName = :string AND UserId = :uid";
+  	$stmt = $pdo->prepare($movieCheckSqlStmt);
+  	$stmt->bindParam(':uid',$uid);
+    $stmt->bindParam(':string', $string);
+  	$stmt->execute();
+  	$result = $stmt->fetchAll();
+  	if(count($result) > 0){
+  		return true;
+  	}
+  	else{
+  		return false;
+  	}
+  }
+
+
 function addToWatch($string){
 	$userId = $_SESSION["UID"];
 	$pdo = new PDO("sqlite:MMDataBase.db");
@@ -137,6 +204,7 @@ function addToWatch($string){
 
 if(isset($_POST['MovieTitle'])){
 	$movietitle = $_POST['MovieTitle'];
+	handlescores($movietitle);
 	addToWatch($movietitle);
 }
 
