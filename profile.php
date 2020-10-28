@@ -41,8 +41,9 @@
 								$title = $data["Title"];
 								$director = $data["Director"];
 								$poster = $data["Poster"];
-							  echo"<div class = movie style='width:300px; height:500px; margin-top:1%; float:left; margin-left: 3%; border:1px;'>
-										<img src = '$poster' style='width:100%;height:90%; padding:2px; background-color:white;'>
+
+							  echo"<div class = watchlistmovie>
+										<img src = '$poster'>
 										<br>
 										<center>
 												<h3 style = 'color:white;'>$title<h3>
