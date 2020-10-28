@@ -19,10 +19,15 @@
     // since "$userId" is defined in the first PHP code chunk, can we omit this variable declaration (below)?
 
     // movies that are watched need to update the fetchAll "$all" variable with innerjoin in watchlist (movie innerjoin watchlist)
+	function parseCategories($categories) {
+
+	}
+
 	$userId = $_SESSION["UID"];
 
 	if(isset($_POST['MovieId'])){
-		echo "<h1>here</h1>";
+		$categories = $_POST['Category'];
+		parseCategories($categories);
 		$movieId = $_POST['MovieId'];
 		$pdo = new PDO("sqlite:MMDataBase.db");
 		$sql = "INSERT INTO Watchlist VALUES(?, ?, 0)";
@@ -66,6 +71,7 @@
 					<h2 id="dir">Director</h2>
 					<h2 id="year">Release Year</h2>
 					<h2 id="act">Actors</h2>
+					<h2 id="cat">Cat</h2>
 				</div>
 			</div>
 		</div>
@@ -84,6 +90,7 @@
 		document.getElementById("dir").innerHTML = "Director: " + movies[moviecount]["Director"];
 		document.getElementById("year").innerHTML ="Release Year: " + movies[moviecount]["ReleaseYear"];
 		document.getElementById("act").innerHTML = "Actors: " +movies[moviecount]["Actors"];
+		document.getElementById("cat").innerHTML = "Category: " +movies[moviecount]["Category"];
 	}
 
 
