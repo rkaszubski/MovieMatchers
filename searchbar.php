@@ -12,6 +12,7 @@ $imdbRating = 0.0;
 $pdo = new PDO("sqlite:MMDataBase.db");
 $input_term =$_POST['search'];
 
+
 function noSpecialChar($string) {
 	if (preg_match('/[\'^£%&*()}{#~?><>,|=_+¬-]/', $string)) {
 	    // one or more of the 'special characters' found in $string
@@ -120,6 +121,25 @@ function populateMovieAdd($string){
 		 $pdo->prepare($newMovieInsertSqlStmt)->execute([$title, $director, $actors, $year, $poster, $imdbRating, $rated, $category]);
 	}
 }
+function addToWatch($string){
+	$userId = $_SESSION["UID"];
+	$pdo = new PDO("sqlite:MMDataBase.db");
+	$sql = "SELECT MID FROM Movies WHERE Title LIKE :string ";
+	$stmt = $pdo->prepare($sql);
+	$stmt->bindParam(':string',$string);
+	$stmt->execute();
+	$MID = intval($stmt->fetchColumn());
+	$sql = "INSERT INTO Watchlist VALUES(?, ?, 0)";
+	$insertStmt = $pdo->prepare($sql);
+    $insertStmt->execute([$userId, $MID]);
+	header('Location: http://localhost:8080/search.php');// replace with hosted URL
+}
+
+if(isset($_POST['MovieTitle'])){
+	$movietitle = $_POST['MovieTitle'];
+	addToWatch($movietitle);
+}
+
 if(noSpecialChar($input_term) == true){
 	if(movieExistsInDb($input_term) == true){
 			populateMovie($input_term);
@@ -131,9 +151,12 @@ if(noSpecialChar($input_term) == true){
 	exit();
 }
 
+
 ?>
+
 <html>
 <head>
+	<SCRIPT SRC="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></SCRIPT>
 	<link rel="stylesheet" href="css/stylesheet.css">
 	<link rel="stylesheet" href="css/searchbar.css">
 	<link rel="icon" href="assets/favicon/favicon.ico">
@@ -149,7 +172,7 @@ if(noSpecialChar($input_term) == true){
 				<img style="height: 600px; padding:3%; background-color:white; width: 400px;" src="<?php echo $poster ?>">
 			</div>
 			<div style="float: left; padding-left:4%; color:#f5f5f5; width:60%; float-right:none;">
-					<h1><?= $display = ($title != null) ? $title : "Title: "; ?></h1><br>
+					<h1 id="title"><?= $display = ($title != null) ? $title : "Title: "; ?></h1><br>
 					<h3>Director: <?= $director ?></h3><br>
 					<h3>Year: <?= $year ?> </h3><br>
 					<h3>Imdb Score: <?= $imdbRating ?></h3><br>
@@ -159,13 +182,26 @@ if(noSpecialChar($input_term) == true){
 					<h3>Plot:</h3>
 					<p><?= $plot ?></p>
 			</div>
-			<div class="addtowtchlist" style="width:100%; float:left; height:5%;">
-				<form method="add">
-					<center><button type= "submit" name="button1" style="padding: 10px;">Add To Watchlist</button></center>
-				</form>
+			<div class="addtowtchlist" style="width:100%; float:center; height:5%;">
+				
+				<button class="button" id="watch" onclick="watchmovie()">Watch</button>
 			</div>
 		</div>
 	</div>
 <?php include('components/footer.php'); ?>
 </body>
 </html>
+<script>
+function watchmovie(){
+	var movtitle = String(document.getElementById("title").textContent);
+	$.ajax({
+	type: 'POST',
+	url: 'searchbar.php',
+	data: {'MovieTitle': movtitle},
+	success: function(data)
+	{
+		alert(movtitle + " added to watchlist");
+	}
+	});
+}
+</script>
