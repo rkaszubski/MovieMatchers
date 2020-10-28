@@ -43,7 +43,8 @@ function noSpecialChar($string) {
 			$sqlUEPrep->execute([$username]);
 			$sqlUsernameExists = $sqlUEPrep->fetchColumn();
 			if ($sqlUsernameExists == false) {
-				$newUserAccountInsertSqlStmt = "INSERT INTO Users (username, email, role) VALUES(?, ?, 'user')";
+				// insert username, email, role, and init - init is a value used to determine if a user goes to "personalize" page
+				$newUserAccountInsertSqlStmt = "INSERT INTO Users (username, email, role, init) VALUES(?, ?, 'user', 0)";
 				$pdo->prepare($newUserAccountInsertSqlStmt)->execute([$username, $email]);
 
 				$stmt = $pdo->prepare("SELECT UID FROM Users WHERE username=?");
