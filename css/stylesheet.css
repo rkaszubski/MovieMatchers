@@ -2,10 +2,12 @@
 
 /*Fonts */
 body {
-	font-family: montserrat, arial, verdana;
-	overflow-x: hidden;
+  font-family: montserrat, arial, verdana;
 }
 
+
+/*Large devices (laptops/desktops, 992px and up) */
+@media screen and (min-width: 992px) {
 /*Header with site title ad menu links*/
 .header{
     height: 15%;
@@ -21,8 +23,9 @@ body {
     width: 60%;
     height: 100%;
 }
+
 .titlepic img{
-	height: 100%;
+  height: 100%;
 	width: 100%;
 }
 
@@ -33,7 +36,7 @@ body {
 
 /*Menu Links*/
 .links{
-	float: left;
+  float: left;
 	width: 30%;
 	height: 100%;
 	text-align: center;
@@ -42,9 +45,8 @@ body {
 	position: relative;
 	top: 50%;
 	padding-left: 5%;
-
-
 }
+
 .links a{
 	margin-top:40%;
 	vertical-align: middle;
@@ -237,4 +239,258 @@ table.centerTB {
 }
 watchlist::-webkit-scrollbar{
 	display: none;
+}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*Small devices(portrait tablets and large phones, 400px and down)*/
+@media screen and (max-width: 500px) {
+
+/*Header with site title ad menu links*/
+.header{
+    height: 15%;
+    background-color: #4d0013;
+    text-align: center;
+    color: #f5f5f5;
+}
+
+/* Site Title */
+.titlepic{
+    padding-left: 0.5%;
+    float:left;
+    width: 60%;
+    height: 100%;
+}
+
+.header img{
+    max-height: 200%;
+    width: 60%;
+}
+
+/*Menu Links*/
+.links{
+	float: left;
+	width: 30%;
+	height: 100%;
+	text-align: center;
+	font-family:sans-serif;
+	color: #f5f5f5;
+	position: relative;
+	top: 50%;
+	padding-left: 5%;
+}
+.links a{
+	margin-top:40%;
+	vertical-align: middle;
+	padding-left: 2%;
+	color: #f5f5f5;
+	text-align: center;
+	text-decoration: none;
+}
+.links a:hover{
+	text-decoration:underline;
+
+}
+
+/*Tranparent blacked out background*/
+.container{
+	background-image: url(../assets/popcorn.jpg);
+	height:auto;
+}
+.overlay{
+	height: 100%;
+	width: 100%;
+	background: rgba(0, 0, 0, 0.9);/* set opacity*/
+	overflow-x: hidden;
+}
+
+* {margin: 0; padding: 0;}
+
+
+/*form styles*/
+#msform {
+	width: 400px;
+	margin: 50px auto;
+	text-align: center;
+	position: relative;
+}
+
+#msform fieldset {
+	background: white;
+	border: 0 none;
+	border-radius: 3px;
+	box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.4);
+	padding: 40px 30px;
+	box-sizing: border-box;
+	width: 200%;
+  height: 60%;
+	margin: 0 -50%;
+
+	/*stacking fieldsets above each other*/
+	position: relative;
+}
+/*Hide all except first fieldset*/
+#msform fieldset:not(:first-of-type) {
+	display: none;
+}
+
+#message{
+	padding: 25%;
+}
+/*inputs*/
+#msform input, #msform textarea {
+	padding: 15px;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	margin-bottom: 10px;
+	width: 100%;
+  height: 20%;
+	box-sizing: border-box;
+	font-family: montserrat;
+	color: #2C3E50;
+	font-size: 50px;
+}
+/*buttons*/
+#msform .action-button {
+	width: 400px;
+  height: 150px;
+	background: #4d0013;;
+	font-weight: bold;
+	color: white;
+	border: 0 none;
+	border-radius: 1px;
+	cursor: pointer;
+	padding: 20px 5px;
+	margin: 50px 5px;
+}
+#msform .action-button:hover, #msform .action-button:focus {
+	box-shadow: 0 0 0 2px white, 0 0 0 3px #4d0013;;
+}
+
+/*headings*/
+.fs-title {
+	font-size: 60px;
+	text-transform: uppercase;
+	color: #2C3E50;
+	margin-bottom: 20px;
+}
+.fs-subtitle {
+	font-weight: normal;
+	font-size: 13px;
+	color: #666;
+	margin-bottom: 20px;
+}
+
+/* Movie Title and information Divs. */
+.movieinfo{
+	color: f5f5f5;
+	text-align: center;
+}
+
+
+/*Container Divs for swipe and pass buttons  */
+.swipe{
+	float: left;
+	height: 60%;
+	width:37.5%;
+	margin-top: 2%;
+	margin-bottom: 2%;
+}
+
+
+/*Buttons for Swiping Functionality*/
+#watch{
+	width: 200px;
+	background: green;;
+	font-weight: bold;
+	color: white;
+	border: 0 none;
+	border-radius: 1px;
+	cursor: pointer;
+	padding: 20px 5px;
+	font-size: 20px;
+	margin: 0;
+	position: relative;
+  	top: 45%;
+  	left: 20%;
+
+}
+#watch:hover, #watch:focus{
+	box-shadow: 0 0 0 4px white, 0 0 0 3px #4d0013;;
+}
+
+#pass{
+	width: 200px;
+	background: #4d0013;;
+	font-weight: bold;
+	color: white;
+	border: 0 none;
+	border-radius: 1px;
+	cursor: pointer;
+	padding: 20px 5px;
+	font-size: 20px;
+	margin: 0;
+	position: relative;
+  	top: 45%;
+  	left: 50%;
+}
+
+#pass:hover, #pass:focus{
+	box-shadow: 0 0 0 4px white, 0 0 0 3px #4d0013;;
+}
+
+/*Container for image poster */
+.movieposter{
+	margin-top: 2%;
+	margin-bottom: 2%;
+	float: left;
+	height: 60%;
+	width: 25%;;
+}
+
+.movieposter img{
+	height: 100%;
+	width: 100%;
+}
+
+table, th, td {
+	border: 1px solid black;
+	border-collapse: collapse;
+}
+th, td {
+	padding: 5px;
+	text-align: left;
+}
+th {
+	font-style: bold;
+}
+table.centerTB {
+	margin-left: auto;
+	margin-right: auto;
+}
+.centerTB {
+	background-color: rgba(255, 0, 0, 0.6);
+}
 }
