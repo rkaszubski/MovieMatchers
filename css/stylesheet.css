@@ -224,6 +224,7 @@ body {
 	height: 500px;
 	margin-top: 1%;
 	margin-bottom: 3%;
+	margin-left: 0.1%;
 	float: left;
 	background-color: white;
 	transition: transform .5s;
