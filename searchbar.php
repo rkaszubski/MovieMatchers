@@ -24,6 +24,8 @@ function noSpecialChar($string) {
 
 function movieExistsInDb($string){
 //Check if searched movie exists in Movie table
+	$data = getOmdbRecord("$string", "2f79417c");
+	$string = $data["Title"];
 	$pdo = new PDO("sqlite:MMDataBase.db");
 	$movieCheckSqlStmt = "SELECT * FROM Movies WHERE Title LIKE :string ";
 	$stmt = $pdo->prepare($movieCheckSqlStmt);
