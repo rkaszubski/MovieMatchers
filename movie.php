@@ -13,10 +13,11 @@
     $sqlFilteredMovies = "SELECT * FROM Movies WHERE MID NOT IN ($sqlWatchedMovies)";
     $stmtFill = $pdo->query($sqlFilteredMovies);
 	  $moviesArr = $stmtFill->fetchall();
+    $movieCount = 
 	?>
 	<?php
 
-    // This chuck of PHP code adds a movie to the users watchlist if the MovieId is set (if it is clicked)
+    // This chunk of PHP code adds a movie to the users watchlist if the MovieId is set (if it is clicked)
 	// since "$userId" is defined in the first PHP code chunk, can we omit this variable declaration (below)?
 	function AddCategories($userId, $catArr) {
 		if (count($catArr) > 0) {
