@@ -134,6 +134,8 @@ if(noSpecialChar($input_term) == true){
 ?>
 <html>
 <head>
+	<meta charset="utf-8">
+    	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
 	<link rel="stylesheet" href="css/stylesheet.css">
 	<link rel="stylesheet" href="css/searchbar.css">
 	<link rel="icon" href="assets/favicon/favicon.ico">
