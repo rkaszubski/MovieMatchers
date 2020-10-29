@@ -92,6 +92,18 @@
     $stmtFill = $pdo->query($sqlFilteredMovies);
     $all = $stmtFill->fetchall();
 	}
+
+  if(isset($_POST['NotCategory'])) {
+    // decrement score for passed movie
+    $pdo = new PDO("sqlite:MMDataBase.db");
+		$categories = $_POST['NotCategory'];
+		$catArr = explode(',', $categories);
+    if (count($catArr) < 1) {
+      header("Location: login.php");
+    }
+		AddCategories($userId, $catArr);
+		AdjustScore(-5,$userId, $catArr);
+  }
 ?>
 <html>
 	<head>
@@ -110,7 +122,7 @@
 				</div>
 				<div class="swipe">
 
-					<button class="button" id="pass" onclick="nextmovie()">Pass</button>
+					<button class="button" id="pass" onclick="pass()">Pass</button>
 				</div>
 				<div class="movieposter">
 					<img id="poster" src="assets/popcorn.jpg" >
@@ -142,7 +154,25 @@
 		document.getElementById("act").innerHTML = "Actors: " +movies[moviecount]["Actors"];
 	}
 
+  function pass() {
+    var movietitle = movies[moviecount]["Title"];
+		var movieCategories = movies[moviecount]["Category"];
+		// console.log(movieCategories + " " + movieIdentity);
+    const data = {
+      NotCategory: movieCategories
+    };
+		$.ajax({
+		type: 'POST',
+		url: 'movie.php',
+		data,
+		success: function(data)
+		{
+			alert(movietitle + " disliked");
+			nextmovie();
+		}
+		});
 
+  }
 	function nextmovie(){
 		moviecount = moviecount + 1;
 		populatemovie();
