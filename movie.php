@@ -8,38 +8,89 @@
     // Initialize PDO Object
     $pdo = new PDO("sqlite:MMDataBase.db");
 
-    $userId = $_SESSION["UID"];
+    $userId = intval($_SESSION["UID"]);
     $sqlWatchedMovies = "SELECT MovieId FROM Watchlist WHERE UserId=$userId";
     $sqlFilteredMovies = "SELECT * FROM Movies WHERE MID NOT IN ($sqlWatchedMovies)";
     $stmtFill = $pdo->query($sqlFilteredMovies);
-    $all = $stmtFill->fetchall();
-?>
-<?php
+	  $moviesArr = $stmtFill->fetchall();
+	?>
+	<?php
+
     // This chuck of PHP code adds a movie to the users watchlist if the MovieId is set (if it is clicked)
-    // since "$userId" is defined in the first PHP code chunk, can we omit this variable declaration (below)?
-
-    // movies that are watched need to update the fetchAll "$all" variable with innerjoin in watchlist (movie innerjoin watchlist)
-	function parseCategories($categories) {
-
+	// since "$userId" is defined in the first PHP code chunk, can we omit this variable declaration (below)?
+	function AddCategories($userId, $catArr) {
+		if (count($catArr) > 0) {
+      $pdo = new PDO("sqlite:MMDataBase.db");
+			$sqlCatExists = "SELECT CategoryName FROM Scores WHERE UserId=:uid AND CategoryName=:category";
+			$sqlInsertCat = "INSERT INTO Scores (UserId, CategoryName, Score) VALUES (:uid,:category,100)";
+			foreach ($catArr as $cat) {
+				$category = trim($cat);
+				$stmtCatExists = $pdo->prepare($sqlCatExists);
+				$stmtCatExists->bindParam(':uid', $userId);
+				$stmtCatExists->bindParam(':category', $category);
+				$stmtCatExists->execute();
+				$catExists = $stmtCatExists->fetchColumn();
+				if ($catExists == false) {
+					$stmtInsertCat = $pdo->prepare($sqlInsertCat);
+					$stmtInsertCat->bindParam(':uid', $userId);
+					$stmtInsertCat->bindParam(':category', $category);
+					$stmtInsertCat->execute();
+				}
+				// else do nothing, category exists
+			}
+		} else {
+			echo "Error, category array is empty";
+		}
+	}
+	function AdjustScore($amt, $userId, $catArr) {
+		if (count($catArr) > 0) {
+      $pdo = new PDO("sqlite:MMDataBase.db");
+			$sqlCatExists = "SELECT Score FROM Scores WHERE UserId=:uid AND CategoryName=:name";
+			$sqlUpdateScore = "UPDATE Scores SET Score=:score WHERE UserId=:uid AND CategoryName=:name";
+			foreach ($catArr as $cat) {
+				// assert the category exists
+        $category = trim($cat);
+				$stmtCatExists = $pdo->prepare($sqlCatExists);
+        $stmtCatExists->bindParam(':uid', $userId);
+        $stmtCatExists->bindParam(':name', $category);
+				$stmtCatExists->execute();
+				$catExists = $stmtCatExists->fetchColumn();
+				if ($catExists != false) {
+					// category exists, update the score
+					$newScore = $catExists + $amt;
+					$stmtUpdateScore = $pdo->prepare($sqlUpdateScore);
+          $stmtUpdateScore->bindParam(':score', $newScore);
+          $stmtUpdateScore->bindParam(':uid', $userId);
+          $stmtUpdateScore->bindParam(':name', $category);
+					$stmtUpdateScore->execute();
+				}
+				// else do nothing, category exists
+			}
+		} else {
+			echo "Error, category array is empty";
+		}
 	}
 
 	$userId = $_SESSION["UID"];
-
 	if(isset($_POST['MovieId'])){
-		$categories = $_POST['Category'];
-		parseCategories($categories);
-		$movieId = $_POST['MovieId'];
+		// implement scoring functionality
 		$pdo = new PDO("sqlite:MMDataBase.db");
+		$categories = $_POST['Category'];
+		$catArr = explode(',', $categories);
+    if (count($catArr) < 1) {
+      header("Location: login.php");
+    }
+		AddCategories($userId, $catArr);
+		AdjustScore(5,$userId, $catArr);
+
+		// add movie to user's watchlist
+		$movieId = $_POST['MovieId'];
 		$sql = "INSERT INTO Watchlist VALUES(?, ?, 0)";
 		$insertStmt = $pdo->prepare($sql);
-        $insertStmt->execute([$userId, $movieId]);
+    $insertStmt->execute([$userId, $movieId]);
 
-        $stmtFill = $pdo->query($sqlFilteredMovies);
-        $all = $stmtFill->fetchall();
-        // foreach($all as $result) {
-        //     echo $result["MovieId"], "<br>";
-        // }
-
+    $stmtFill = $pdo->query($sqlFilteredMovies);
+    $all = $stmtFill->fetchall();
 	}
 ?>
 <html>
@@ -71,7 +122,6 @@
 					<h2 id="dir">Director</h2>
 					<h2 id="year">Release Year</h2>
 					<h2 id="act">Actors</h2>
-					<h2 id="cat">Cat</h2>
 				</div>
 			</div>
 		</div>
@@ -80,7 +130,7 @@
 </html>
 
 <script>
-	var movies = <?php echo json_encode($all)?>;
+	var movies = <?php echo json_encode($moviesArr)?>;
 	var moviecount = 0;
 	populatemovie();
 
@@ -90,7 +140,6 @@
 		document.getElementById("dir").innerHTML = "Director: " + movies[moviecount]["Director"];
 		document.getElementById("year").innerHTML ="Release Year: " + movies[moviecount]["ReleaseYear"];
 		document.getElementById("act").innerHTML = "Actors: " +movies[moviecount]["Actors"];
-		document.getElementById("cat").innerHTML = "Category: " +movies[moviecount]["Category"];
 	}
 
 
@@ -102,16 +151,23 @@
 	function watchmovie(){
 		var movietitle = movies[moviecount]["Title"];
 		var movieIdentity = movies[moviecount]["MID"];
+		var movieCategories = movies[moviecount]["Category"];
+		// console.log(movieCategories + " " + movieIdentity);
+    const data = {
+      MovieId: movieIdentity,
+      Category: movieCategories
+    };
 		$.ajax({
 		type: 'POST',
 		url: 'movie.php',
-		data: {'MovieId': movieIdentity},
+		data,
 		success: function(data)
 		{
 			alert(movietitle + " added to watchlist");
+			nextmovie();
 		}
 		});
-		nextmovie();
+
 	}
 
 </script>
