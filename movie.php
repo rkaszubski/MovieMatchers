@@ -13,7 +13,8 @@
     $sqlFilteredMovies = "SELECT * FROM Movies WHERE MID NOT IN ($sqlWatchedMovies)";
     $stmtFill = $pdo->query($sqlFilteredMovies);
 	  $moviesArr = $stmtFill->fetchall();
-    $movieCount = 
+
+
 	?>
 	<?php
 
@@ -92,6 +93,15 @@
 
     $stmtFill = $pdo->query($sqlFilteredMovies);
     $all = $stmtFill->fetchall();
+
+    // grab a random MID from movies user hasn't added to watchlist or passed on yet
+    // still don't have a passed table yet
+    // $minMID = $pdo->query("SELECT min(MID) FROM ($sqlFilteredMovies)");
+    // $maxMID = $pdo->query("SELECT max(MID) FROM ($sqlFilteredMovies)");
+    // $randomMID = rand($minMID, $maxMID);
+    // echo $minMID;
+    // echo $maxMID;
+    // echo $randomMID;
 	}
 
   if(isset($_POST['NotCategory'])) {
