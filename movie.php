@@ -9,6 +9,15 @@
     $pdo = new PDO("sqlite:MMDataBase.db");
 
     $userId = intval($_SESSION["UID"]);
+    // initilize user scores with categories
+    // $sqlScoreFilter = "SELECT CategoryName,Score FROM Scores WHERE UserId=:uid ORDER BY Score DESC";
+    // $stmtScoreFilter = $pdo->prepare($sqlScoreFilter);
+    // $stmtScoreFilter->bindParam(':uid', $userId);
+    // $stmtScoreFilter->execute();
+    // $scoreFilter = $stmtScoreFilter->fetchAll();
+    // echo var_dump($scoreFilter);
+
+    // query filtered Movies
     $sqlWatchedMovies = "SELECT MovieId FROM Watchlist WHERE UserId=$userId";
     $sqlFilteredMovies = "SELECT * FROM Movies WHERE MID NOT IN ($sqlWatchedMovies)";
     $stmtFill = $pdo->query($sqlFilteredMovies);
