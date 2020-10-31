@@ -29,9 +29,10 @@
 			<div class = overlay style=" overflow:scroll; overflow-x:hidden; padding-right:10%;">
 				<br>
 				<center><h1 style="border-bottom:1px; border-bottom-style:solid;color:white;"><?= $user ?>'s Recommendations</h1></center>
+					<div class= watchlist style="height:80%; width:90%;margin-left:10%; margin-right:5%; ">
 				<?php
 				//$pdo = new PDO("sqlite:MMDataBase.db");
-				$getrecommendedmovies = "SELECT * FROM SCORES WHERE UserId = :uid ORDER BY Score DESC LIMIT 3 "; // get three categories with the highest scores
+				$getrecommendedmovies = "SELECT * FROM SCORES WHERE UserId = :uid ORDER BY Score DESC LIMIT 5 "; // get three categories with the highest scores
 				$stmtRecommendations = $pdo->prepare($getrecommendedmovies);
 				$stmtRecommendations->bindParam(":uid", $uid);
 				$stmtRecommendations->execute();
@@ -39,18 +40,24 @@
 				foreach ($recommendations as $category) {
 
 					$category = ($category["CategoryName"]);
-					echo "<br>";
-
-					echo $appendedCategory;
-					$moviesWithCategory = "SELECT * FROM Movies WHERE Category LIKE ?";
+					$moviesWithCategory = "SELECT * FROM Movies WHERE Category LIKE ? ORDER BY random() LIMIT 1";
 					$movies = $pdo->prepare($moviesWithCategory);
 					$movies->execute(["%$category%"]);
 					$results = $movies->fetchAll();
-					var_dump($results[0]["Category"]);
+					$title = $results[0]["Title"];
+					$poster = $results[0]["Poster"];
+					echo"<div class = watchlistmovie>
+							<img src = '$poster'>
+							<br>
+							<center>
+									<h3 style = 'color:white;'>$title<h3>
+							</center>
+					</div>";
 				}
 				?>
+			</div>
 
-				<br>
+
 				<center><h1 style="border-bottom:1px; border-bottom-style:solid;color:white;"><?= $user ?>'s Watchlist</h1></center>
 				<br>
 				<div class= watchlist style="height:80%; width:90%;margin-left:10%; margin-right:5%; ">
