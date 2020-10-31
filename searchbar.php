@@ -1,18 +1,20 @@
 <?php
 session_start();
+//If user is not logged in redirect to login page
 if (!isset($_SESSION["UID"]))
 {
 		header("Location: login.php");
 }
-//test
+//Store user ID and declare global variables
 $userId = $_SESSION["UID"];
 $title = $director = $actors = $category = $poster = $rated = $plot = "";
 $year = 0;
 $imdbRating = 0.0;
-$pdo = new PDO("sqlite:MMDataBase.db");
-$input_term =$_POST['search'];
+$pdo = new PDO("sqlite:MMDataBase.db"); //Establish Database connection
+$input_term =$_POST['search'];   				// Store user input from search page
 
 
+// Function to ensure no special characters are used in movie name
 function noSpecialChar($string) {
 	if (preg_match('/[\'^£%&*()}{#~?><>,|=_+¬-]/', $string)) {
 	    // one or more of the 'special characters' found in $string
@@ -22,12 +24,13 @@ function noSpecialChar($string) {
 }
 
 
+//This function check to see if record of searched movie exists in Database
 function movieExistsInDb($string){
 //Check if searched movie exists in Movie table
 	$data = getOmdbRecord("$string", "2f79417c");
 	$string = $data["Title"];
 	$pdo = new PDO("sqlite:MMDataBase.db");
-	$movieCheckSqlStmt = "SELECT * FROM Movies WHERE Title LIKE :string ";
+	$movieCheckSqlStmt = "SELECT * FROM Movies WHERE Title LIKE :string "; //Query to check if movie with Specific name is already in Database
 	$stmt = $pdo->prepare($movieCheckSqlStmt);
 	$stmt->bindParam(':string',$string);
 	$stmt->execute();
@@ -42,6 +45,7 @@ function movieExistsInDb($string){
 	}
 }
 
+// This function uses the OMDB API to get the information of the movie the user searched
 function getOmdbRecord($movieName, $ApiKey)
 {
 	//replace spaces " " with plus sign "+"
@@ -55,14 +59,15 @@ function getOmdbRecord($movieName, $ApiKey)
 
 //Populate page using Database and not ping OMDB
 function populateMovieFromDB($string){
-	global $title,$director,$actors,$year,$imdbRating,$category,$poster,$rated,$plot;
-	$pdo = new PDO("sqlite:MMDataBase.db");
-	$movieCheckSqlStmt = "SELECT * FROM Movies WHERE Title LIKE :string ";
-	$stmt = $pdo->prepare($movieCheckSqlStmt);
-	$stmt->bindParam(':string',$string);
-	$stmt->execute();
-	$data = $stmt->fetchAll();
+	global $title,$director,$actors,$year,$imdbRating,$category,$poster,$rated,$plot; // Using global varables to store information that will be used later
+	$pdo = new PDO("sqlite:MMDataBase.db");																						// Establish conncetion to DB
+	$movieCheckSqlStmt = "SELECT * FROM Movies WHERE Title LIKE :string ";						// Query to select movie with specific name
+	$stmt = $pdo->prepare($movieCheckSqlStmt);																				// Prepare Query
+	$stmt->bindParam(':string',$string);																							// Different syntax to inject variable information into Query
+	$stmt->execute();																																	// Execute
+	$data = $stmt->fetchAll();																												// Get all records from query execution
 
+	// Store all relevant information into global variable
 	$title = $data[0]["Title"];
 	$director = $data[0]["Director"];
 	$actors = $data[0]["Actors"];
@@ -79,17 +84,12 @@ function populateMovieFromDB($string){
 
 //Populate movies from OMDB
 function populateMovieOMDB($string){
-	$data = getOmdbRecord("$string", "2f79417c");
+	$data = getOmdbRecord("$string", "2f79417c");  //Use OMDB to get movie information
 	global $pdo;
 	global $title,$director,$actors,$year,$imdbRating,$category,$poster,$rated,$plot;
-//	Uncomment following code to see full Json file from OMDB
-//		echo '<h1> Raw data </h1>';
-//		var_dump($data);
-//		echo '<br><br>';
-//
 	//if movie was not found redirect to search page
-	if(count($data) < 3){
-		header('Location: http://localhost:8080/search.php');// replace with hosted URL
+	if(count($data) < 3){ // If the  resulting JSON file has less that 3 keys then movie was not found, redirect to search page
+		header('Location: search.php');// replace with hosted URL
 		exit();
 	}
 	else{
@@ -106,10 +106,14 @@ function populateMovieOMDB($string){
 		 $rated = $data["Rated"];
 		 $plot = $data["Plot"];
 
+		 // Insert movie information into Movie Table
 		 $newMovieInsertSqlStmt = "INSERT INTO Movies (Title, Director, Actors, ReleaseYear, Poster, IMDB_score, Rated, Category) VALUES (?,?,?,?,?,?,?,?)";
 		 $pdo->prepare($newMovieInsertSqlStmt)->execute([$title, $director, $actors, $year, $poster, $imdbRating, $rated, $category]);
 	}
 }
+
+
+// This Function adjusts the score of the category based on if the user adds it to their watchlist (See movie.php for further comments)
 function handlescores($string){
 	$uid = $_SESSION["UID"];
 
@@ -156,6 +160,8 @@ function handlescores($string){
   }
 }
 }
+
+// This function checks if a row holding the score of current category exists (see movie.php for further infromation)
 function categoryExists($string){
     $uid = $_SESSION["UID"];
 
@@ -176,7 +182,7 @@ function categoryExists($string){
   	}
   }
 
-
+// Add movie to watchlist called using Ajax
 function addToWatch($string){
 	$userId = $_SESSION["UID"];
 	$pdo = new PDO("sqlite:MMDataBase.db");
@@ -188,7 +194,7 @@ function addToWatch($string){
 	$sql = "INSERT INTO Watchlist VALUES(?, ?, 0)";
 	$insertStmt = $pdo->prepare($sql);
     $insertStmt->execute([$userId, $MID]);
-	header('Location: http://localhost:8080/search.php');// replace with hosted URL
+	header('Location: search.php');// replace with hosted URL
 }
 
 if(isset($_POST['MovieTitle'])){
@@ -197,20 +203,19 @@ if(isset($_POST['MovieTitle'])){
 	addToWatch($movietitle);
 }
 
-if(noSpecialChar($input_term) == true){
-	if(movieExistsInDb($input_term) == true){
-			populateMovieFromDB($input_term);
+if(noSpecialChar($input_term) == true){				//Make sure searched movie has no special characters
+	if(movieExistsInDb($input_term) == true){		// If searched movie exists in db
+			populateMovieFromDB($input_term);				// Populate page using information from DB
 	}else{
-		populateMovieOMDB($input_term);
+		populateMovieOMDB($input_term);						//Else use OMDB information to populate page
 	}
 }else{
-	header('Location: http://localhost:8080/search.php');// replace with hosted URL
+	header('Location: search.php');// replace with hosted URL
 	exit();
 }
 
 
 ?>
-
 <html>
 <head>
 	<SCRIPT SRC="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></SCRIPT>

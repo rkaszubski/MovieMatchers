@@ -1,10 +1,10 @@
 <?php
+//if not logged in redirect to login page
     session_start();
     if (!isset($_SESSION["UID"]))
     {
 				header("Location: login.php");
     }
-		//test
 ?>
 
 <html>

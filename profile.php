@@ -7,14 +7,14 @@
 	}
 	$user = $_SESSION["username"];
 	$uid = $_SESSION["UID"];
-//test
+
 	$user = $_SESSION["username"];
 	$uid = $_SESSION["UID"];
 	$pdo = new PDO("sqlite:MMDataBase.db");
-	$sqlUserWatchlistMID = "SELECT MovieId FROM Watchlist WHERE UserId=?";
-	$stmt = $pdo->prepare($sqlUserWatchlistMID);
-	$stmt->execute([$uid]);
-	$userWatchlistMID = $stmt->fetchAll();
+	$sqlUserWatchlistMID = "SELECT MovieId FROM Watchlist WHERE UserId=?"; //Query to get all movies
+	$stmt = $pdo->prepare($sqlUserWatchlistMID); //Prepare Statement
+	$stmt->execute([$uid]);											 // Inject variable information into query and Execute
+	$userWatchlistMID = $stmt->fetchAll();			 // Get all records from executing query
 
 ?>
 <html>
@@ -32,20 +32,23 @@
 					<div class= watchlist style="height:80%; width:90%;margin-left:10%; margin-right:5%; ">
 				<?php
 				//$pdo = new PDO("sqlite:MMDataBase.db");
-				$getrecommendedmovies = "SELECT * FROM SCORES WHERE UserId = :uid ORDER BY Score DESC LIMIT 5 "; // get three categories with the highest scores
-				$stmtRecommendations = $pdo->prepare($getrecommendedmovies);
-				$stmtRecommendations->bindParam(":uid", $uid);
-				$stmtRecommendations->execute();
+				$getrecommendedmovies = "SELECT * FROM SCORES WHERE UserId = :uid ORDER BY Score DESC LIMIT 5 "; // Query to get top 5 categories with the highest scores
+				$stmtRecommendations = $pdo->prepare($getrecommendedmovies); //prepare satement
+				$stmtRecommendations->bindParam(":uid", $uid); 							 // inject parameter information into Query
+				$stmtRecommendations->execute(); 														 // Execute the query
 				$recommendations = $stmtRecommendations->fetchAll();
-				foreach ($recommendations as $category) {
-
+				foreach ($recommendations as $category) { //For each category previously recieved
 					$category = ($category["CategoryName"]);
-					$moviesWithCategory = "SELECT * FROM Movies WHERE Category LIKE ? ORDER BY random() LIMIT 1";
-					$movies = $pdo->prepare($moviesWithCategory);
-					$movies->execute(["%$category%"]);
-					$results = $movies->fetchAll();
+					$moviesWithCategory = "SELECT * FROM Movies WHERE Category LIKE ? ORDER BY random() LIMIT 1"; // Get one random movie that has current category in Catrgory field
+					$movies = $pdo->prepare($moviesWithCategory);																									// Prepare Query
+					$movies->execute(["%$category%"]);																														// Inject varible information and executing query
+					$results = $movies->fetchAll();																																// Get all records from query execution
+
+					//Storing  the Title and poster information of randomly selected movie in variables
 					$title = $results[0]["Title"];
 					$poster = $results[0]["Poster"];
+
+					//This code injects the html div that will populate the recommendations on the profile page
 					echo"<div class = watchlistmovie>
 							<img src = '$poster'>
 							<br>
@@ -66,14 +69,17 @@
 							foreach($userWatchlistMID as $row)
 							{
 								$mid = $row["MovieId"];
-								$sqlMovieTitle = "SELECT Title, Director, Poster FROM Movies WHERE MID=?";
-								$stmt2 = $pdo->prepare($sqlMovieTitle);
-								$stmt2->execute([$mid]);
-								$data = $stmt2->fetch();
+								$sqlMovieTitle = "SELECT Title, Director, Poster FROM Movies WHERE MID=?"; // Query to get all information of movies in watchlist by their Movie IDs from movie table
+								$stmt2 = $pdo->prepare($sqlMovieTitle);																		 // Prepare Query
+								$stmt2->execute([$mid]);																									 // Inject variable information into query and execute
+								$data = $stmt2->fetch();																									 // Get all records from query execution
+
+								//Storing Title and Poster information of movies
 								$title = $data["Title"];
 								$director = $data["Director"];
 								$poster = $data["Poster"];
 
+								//This code injects the HTML div that populates the movie information on the Profile Page
 							  echo"<div class = watchlistmovie>
 										<img src = '$poster'>
 										<br>

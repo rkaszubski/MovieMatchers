@@ -1,4 +1,5 @@
 <?php
+//If not logged in redirect to login page
     session_start();
     if (!isset($_SESSION["UID"]))
   	{
@@ -8,9 +9,10 @@
     // Initialize PDO Object
     $pdo = new PDO("sqlite:MMDataBase.db");
 
-    $userId = intval($_SESSION["UID"]);
-    $sqlWatchedMovies = "SELECT MovieId FROM Watchlist WHERE UserId=$userId";
-    $sqlFilteredMovies = "SELECT * FROM Movies WHERE MID NOT IN ($sqlWatchedMovies)";
+
+    $userId = intval($_SESSION["UID"]);//Get userID which is unique to user
+    $sqlWatchedMovies = "SELECT MovieId FROM Watchlist WHERE UserId=$userId"; //Get all movies in watch list that match current user ID
+    $sqlFilteredMovies = "SELECT * FROM Movies WHERE MID NOT IN ($sqlWatchedMovies)"; //Select all movies from movie table that are not already in current users watchlist
     $stmtFill = $pdo->query($sqlFilteredMovies);
 	  $moviesArr = $stmtFill->fetchall();
 	?>
@@ -21,16 +23,16 @@
 	function AddCategories($userId, $catArr) {
 		if (count($catArr) > 0) {
       $pdo = new PDO("sqlite:MMDataBase.db");
-			$sqlCatExists = "SELECT CategoryName FROM Scores WHERE UserId=:uid AND CategoryName=:category";
-			$sqlInsertCat = "INSERT INTO Scores (UserId, CategoryName, Score) VALUES (:uid,:category,100)";
+			$sqlCatExists = "SELECT CategoryName FROM Scores WHERE UserId=:uid AND CategoryName=:category"; // Get all records containing scores for categories specific to current user
+			$sqlInsertCat = "INSERT INTO Scores (UserId, CategoryName, Score) VALUES (:uid,:category,100)"; // Query to add a category if a record does not already exist
 			foreach ($catArr as $cat) {
-				$category = trim($cat);
+				$category = trim($cat); // remove spaces
 				$stmtCatExists = $pdo->prepare($sqlCatExists);
 				$stmtCatExists->bindParam(':uid', $userId);
 				$stmtCatExists->bindParam(':category', $category);
 				$stmtCatExists->execute();
 				$catExists = $stmtCatExists->fetchColumn();
-				if ($catExists == false) {
+				if ($catExists == false) { //If recode does not already exist insert it into table with initial score of 100
 					$stmtInsertCat = $pdo->prepare($sqlInsertCat);
 					$stmtInsertCat->bindParam(':uid', $userId);
 					$stmtInsertCat->bindParam(':category', $category);
@@ -42,6 +44,8 @@
 			echo "Error, category array is empty";
 		}
 	}
+
+  //The following function adjusts the score of a category based on whether a user passes on movie of that category or adds to watchlist
 	function AdjustScore($amt, $userId, $catArr) {
 		if (count($catArr) > 0) {
       $pdo = new PDO("sqlite:MMDataBase.db");
