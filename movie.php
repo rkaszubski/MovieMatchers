@@ -34,8 +34,8 @@
     $moviesArrFiltered = array_unique($moviesArrFiltered, SORT_REGULAR);
     $moviesArr = array_values($moviesArrFiltered);
 
-    print_r($moviesArr);
-    echo count($moviesArr);
+    // print_r($moviesArr);
+    // echo "Movies array has " . count($moviesArr) . " rows";
 	?>
 	<?php
 

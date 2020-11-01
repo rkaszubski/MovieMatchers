@@ -6,12 +6,13 @@ if (!isset($_SESSION["UID"]))
 		header("Location: login.php");
 }
 //Store user ID and declare global variables
-$userId = $_SESSION["UID"];
+$userId = intval($_SESSION["UID"]);
+$movieError = "";
 $title = $director = $actors = $category = $poster = $rated = $plot = "";
 $year = 0;
 $imdbRating = 0.0;
+$input_term = "";
 $pdo = new PDO("sqlite:MMDataBase.db"); //Establish Database connection
-$input_term =$_POST['search'];   				// Store user input from search page
 
 
 // Function to ensure no special characters are used in movie name
@@ -23,29 +24,8 @@ function noSpecialChar($string) {
 	return true;
 }
 
-
-//This function check to see if record of searched movie exists in Database
-function movieExistsInDb($string){
-//Check if searched movie exists in Movie table
-	$data = getOmdbRecord("$string", "2f79417c");
-	$string = $data["Title"];
-	$pdo = new PDO("sqlite:MMDataBase.db");
-	$movieCheckSqlStmt = "SELECT * FROM Movies WHERE Title LIKE :string "; //Query to check if movie with Specific name is already in Database
-	$stmt = $pdo->prepare($movieCheckSqlStmt);
-	$stmt->bindParam(':string',$string);
-	$stmt->execute();
-	$result = $stmt->fetchAll();
-
-	//if number of found records is less than 1
-	if(count($result) > 0){
-		return true;
-	}
-	else{
-		return false;
-	}
-}
-
-// This function uses the OMDB API to get the information of the movie the user searched
+// This function uses the OMDB API to get the information of the movie
+// the user has searched
 function getOmdbRecord($movieName, $ApiKey)
 {
 	//replace spaces " " with plus sign "+"
@@ -56,162 +36,187 @@ function getOmdbRecord($movieName, $ApiKey)
 	$json = file_get_contents($path);
 	return json_decode($json, TRUE);
 }
+//-------------- swipe methods --------------//
+function AddCategories($userId, $catArr) {
+	if (count($catArr) > 0) {
+		$pdo = new PDO("sqlite:MMDataBase.db");
+		$sqlCatExists = "SELECT CategoryName FROM Scores WHERE UserId=:uid AND CategoryName=:category"; // Get all records containing scores for categories specific to current user
+		$sqlInsertCat = "INSERT INTO Scores (UserId, CategoryName, Score) VALUES (:uid,:category,100)"; // Query to add a category if a record does not already exist
+		foreach ($catArr as $cat) {
+			$category = trim($cat); // remove spaces
+			$stmtCatExists = $pdo->prepare($sqlCatExists);
+			$stmtCatExists->bindParam(':uid', $userId);
+			$stmtCatExists->bindParam(':category', $category);
+			$stmtCatExists->execute();
+			$catExists = $stmtCatExists->fetchColumn();
+			if ($catExists == false) { //If recode does not already exist insert it into table with initial score of 100
+				$stmtInsertCat = $pdo->prepare($sqlInsertCat);
+				$stmtInsertCat->bindParam(':uid', $userId);
+				$stmtInsertCat->bindParam(':category', $category);
+				$stmtInsertCat->execute();
+			}
+			// else do nothing, category exists
+		}
+	} else {
+		echo "Error, category array is empty";
+	}
+}
 
-//Populate page using Database and not ping OMDB
-function populateMovieFromDB($string){
+//The following function adjusts the score
+// of a category based on whether a user passes on
+// movie of that category or adds to watchlist
+function AdjustScore($amt, $userId, $catArr) {
+	if (count($catArr) > 0) {
+		$pdo = new PDO("sqlite:MMDataBase.db");
+		$sqlCatExists = "SELECT Score FROM Scores WHERE UserId=:uid AND CategoryName=:name";
+		$sqlUpdateScore = "UPDATE Scores SET Score=:score WHERE UserId=:uid AND CategoryName=:name";
+		foreach ($catArr as $cat) {
+			// assert the category exists
+			$category = trim($cat);
+			$stmtCatExists = $pdo->prepare($sqlCatExists);
+			$stmtCatExists->bindParam(':uid', $userId);
+			$stmtCatExists->bindParam(':name', $category);
+			$stmtCatExists->execute();
+			$catExists = $stmtCatExists->fetchColumn();
+			if ($catExists != false) {
+				// category exists, update the score
+				$newScore = $catExists + $amt;
+				$stmtUpdateScore = $pdo->prepare($sqlUpdateScore);
+				$stmtUpdateScore->bindParam(':score', $newScore);
+				$stmtUpdateScore->bindParam(':uid', $userId);
+				$stmtUpdateScore->bindParam(':name', $category);
+				$stmtUpdateScore->execute();
+			}
+			// else do nothing, category exists
+		}
+	} else {
+		echo "Error, category array is empty";
+	}
+}
+// ------------- end Swipe methods ----------//
+
+function populateMovie($movieTitle) {
+	$userId = intval($_SESSION["UID"]);
+	$mTitle = trim($movieTitle);
+	if ($mTitle == null) {
+		echo "error, movietitle is null";
+		return false;
+	}
+
 	global $title,$director,$actors,$year,$imdbRating,$category,$poster,$rated,$plot; // Using global varables to store information that will be used later
-	$pdo = new PDO("sqlite:MMDataBase.db");																						// Establish conncetion to DB
-	$movieCheckSqlStmt = "SELECT * FROM Movies WHERE Title LIKE :string ";						// Query to select movie with specific name
-	$stmt = $pdo->prepare($movieCheckSqlStmt);																				// Prepare Query
-	$stmt->bindParam(':string',$string);																							// Different syntax to inject variable information into Query
-	$stmt->execute();																																	// Execute
-	$data = $stmt->fetchAll();																												// Get all records from query execution
+	$pdo = new PDO("sqlite:MMDataBase.db");
+	$sqlMovieExistsInDB = "SELECT MID FROM Movies WHERE Title LIKE :title "; //Query to check if movie with Specific name is already in Database
+	$stmtMovieExistsInDB = $pdo->prepare($sqlMovieExistsInDB);
+	$stmtMovieExistsInDB->bindParam(':title',$movieTitle);
+	$stmtMovieExistsInDB->execute();
+	$movieExistsInDB = $stmtMovieExistsInDB->fetchColumn();
 
-	// Store all relevant information into global variable
-	$title = $data[0]["Title"];
-	$director = $data[0]["Director"];
-	$actors = $data[0]["Actors"];
-	$year = $data[0]["ReleaseYear"];
-	$year = intval($year); //convert to int to add to database
-	$imdbRating = $data[0]["IMDB_score"];
-	$imdbRating =floatval($imdbRating); //convert to float (cannot do int because it rounds up/down)
-	$category = $data[0]["Category"];
-	$poster = $data[0]["Poster"];
-	$rated = $data[0]["Rated"];
-	$plot = $data[0]["Plot"];
+	if ($movieExistsInDB != false) {
+		// movie exists in database, use database to populate
+		$sqlGetMovieDataByName = "SELECT * FROM Movies WHERE Title LIKE :title ";						// Query to select movie with specific name
+		$stmtGetMovieDataByName = $pdo->prepare($sqlGetMovieDataByName);																				// Prepare Query
+		$stmtGetMovieDataByName->bindParam(':title',$mTitle);																							// Different syntax to inject variable information into Query
+		$stmtGetMovieDataByName->execute();																																	// Execute
+		$movieData = $stmtGetMovieDataByName->fetch();																												// Get all records from query execution
+
+		// Store all relevant information into global variable
+		$title = $movieData["Title"];
+		$director = $movieData["Director"];
+		$actors = $movieData["Actors"];
+		$year = intval($movieData["ReleaseYear"]); //convert to int to add to database
+		$imdbRating =floatval($movieData["IMDB_score"]); //convert to float (cannot do int because it rounds up/down)
+		$category = $movieData["Category"];
+		$poster = $movieData["Poster"];
+		$rated = $movieData["Rated"];
+		$plot = $movieData["Plot"];
+
+	} else {
+		// movie does NOT exist, get data from omdbapi
+		$movieData = getOmdbRecord($mTitle, "2f79417c");  //Use OMDB to get movie information
+		//if movie was not found redirect to search page
+		if(count($movieData) < 3) {
+			// If the  resulting JSON file has less that 3 keys then movie was not found, redirect to search page
+			header('Location: search.php');// replace with hosted URL
+			exit();
+		} else{
+			//Get relevant infomation from returned Jsonfile
+			 $title = $movieData["Title"];
+			 $director = $movieData["Director"];
+			 $actors = $movieData["Actors"];
+			 $year = intval($movieData["Year"]); //convert to int to add to database
+			 $imdbRating =floatval($movieData["imdbRating"]); //convert to float (cannot do int because it rounds up/down)
+			 $category = $movieData["Genre"];
+			 $poster = $movieData["Poster"];
+			 $rated = $movieData["Rated"];
+			 $plot = $movieData["Plot"];
+
+			 // Insert movie information into Movie Table
+			 $sqlInsertNewMovieIntoMovies = "INSERT INTO Movies (Title, Director, Actors, ReleaseYear, Poster, IMDB_score, Rated, Category, Plot) VALUES (?,?,?,?,?,?,?,?,?)";
+			 $stmtInsertNewMovieIntoMovies = $pdo->prepare($sqlInsertNewMovieIntoMovies);
+			 $stmtInsertNewMovieIntoMovies->execute([$title, $director, $actors, $year, $poster, $imdbRating, $rated, $category, $plot]);
+		}
+	}
+	$categories = explode(',', $category);
+	AddCategories($userId, $categories);
+}
+
+// Add movie to watchlist called using Ajax
+function addToWatchlist($movieTitle) {
+	$userId = intval($_SESSION["UID"]);
+	$pdo = new PDO("sqlite:MMDataBase.db");
+	$sqlGetMovieIdByTitle = "SELECT MID, Category FROM Movies WHERE Title LIKE :title";
+	$stmtGetMovieIdByTitle = $pdo->prepare($sqlGetMovieIdByTitle);
+	$stmtGetMovieIdByTitle->bindParam(':title',$movieTitle);
+	$stmtGetMovieIdByTitle->execute();
+	$movieExistsByTitle = $stmtGetMovieIdByTitle->fetch();
+	if ($movieExistsByTitle == false) {
+		$movieError = "This movie does not exist by associated title";
+		return;
+	}
+	$movieId = intval($movieExistsByTitle["MID"]);
+	$categories = explode(',', $movieExistsByTitle["Category"]);
+
+	// check if movie is in watchlist for user
+	$sqlMovieExistsInWatchlist = "SELECT MovieId FROM Watchlist WHERE UserId=:userId AND MovieId=:movieId";
+	$stmtMovieExistsInWatchlist = $pdo->prepare($sqlMovieExistsInWatchlist);
+	$stmtMovieExistsInWatchlist->bindParam(':userId',$userId);
+	$stmtMovieExistsInWatchlist->bindParam(':movieId',$movieId);
+	$stmtMovieExistsInWatchlist->execute();
+	$movieExistsInWatchlist = $stmtMovieExistsInWatchlist->fetchColumn();
+	// fetchColumn() returns "false" if no records are found
+	if ($movieExistsInWatchlist == false) {
+		// movie does NOT exist in user's watchlist, ADD MOVIE, ADD CATEGORIES w/ Scores
+		// THIS IS ADDING 5 TO SCORES
+		AdjustScore(5,$userId, $categories);
+		// insert into watchlist
+		$sqlInsertMovieIdToWatchlist = "INSERT INTO Watchlist (UserId, MovieId, Watched) VALUES(?, ?, 0)";
+		$insertMovieIdToWatchlist = $pdo->prepare($sqlInsertMovieIdToWatchlist);
+	  $insertMovieIdToWatchlist->execute([$userId, $movieId]);
+		header('Location: search.php');// replace with hosted URL
+	} else {
+		// movie already is in watchlist, error out
+		echo "Error, this movie is already watched";
+	}
 }
 
 
-//Populate movies from OMDB
-function populateMovieOMDB($string){
-	$data = getOmdbRecord("$string", "2f79417c");  //Use OMDB to get movie information
-	global $pdo;
-	global $title,$director,$actors,$year,$imdbRating,$category,$poster,$rated,$plot;
-	//if movie was not found redirect to search page
-	if(count($data) < 3){ // If the  resulting JSON file has less that 3 keys then movie was not found, redirect to search page
+/* -------------------- BELOW ALL FUNCTIONS ARE CALLED/INITIATED --------------------- */
+
+// If Watch button is clicked, add to watchlist
+if(isset($_POST['MovieTitle'])) {
+	$titleOfMovie = trim($_POST['MovieTitle']);
+	addToWatchlist($titleOfMovie);
+}
+
+if (isset($_POST['search'])) {
+	// Store user input from search page
+	$input_term = trim($_POST['search']);
+	if(noSpecialChar($input_term) == true){				//Make sure searched movie has no special characters
+		populateMovie($input_term);
+	} else {
 		header('Location: search.php');// replace with hosted URL
 		exit();
 	}
-	else{
-	//Get relevant infomation from returned Jsonfile
-		 $title = $data["Title"];
-		 $director = $data["Director"];
-		 $actors = $data["Actors"];
-		 $year = $data["Year"];
-		 $year = intval($year); //convert to int to add to database
-		 $imdbRating = $data["imdbRating"];
-		 $imdbRating =floatval($imdbRating); //convert to float (cannot do int because it rounds up/down)
-		 $category = $data["Genre"];
-		 $poster = $data["Poster"];
-		 $rated = $data["Rated"];
-		 $plot = $data["Plot"];
-
-		 // Insert movie information into Movie Table
-		 $newMovieInsertSqlStmt = "INSERT INTO Movies (Title, Director, Actors, ReleaseYear, Poster, IMDB_score, Rated, Category) VALUES (?,?,?,?,?,?,?,?)";
-		 $pdo->prepare($newMovieInsertSqlStmt)->execute([$title, $director, $actors, $year, $poster, $imdbRating, $rated, $category]);
-	}
-}
-
-
-// This Function adjusts the score of the category based on if the user adds it to their watchlist (See movie.php for further comments)
-function handlescores($string){
-	$uid = $_SESSION["UID"];
-
-	$uid = intval($uid);
-	$searched = $string;
-	$pdo = new PDO("sqlite:MMDataBase.db");
-	$movieCheckSqlStmt = "SELECT * FROM Movies WHERE Title LIKE :string ";
-	$stmt = $pdo->prepare($movieCheckSqlStmt);
-	$stmt->bindParam(':string',$searched);
-	$stmt->execute();
-	$data = $stmt->fetchAll();
-	$searchedMovieCategories = $data[0]["Category"];
-	$searchedMovieCategories = explode(',', $searchedMovieCategories);
-
-  // echo '<br>';
-  // var_dump($uid);
-
-
-  foreach ($searchedMovieCategories as $category) {
-      if(categoryExists($category) == false){
-          $pdo = new PDO("sqlite:MMDataBase.db");
-          $categoryCheckSqlStmt = "INSERT INTO Scores (UserId,CategoryName,Score) VALUES (?,?,100)";
-          $stmt = $pdo->prepare($categoryCheckSqlStmt);
-          $stmt->execute([$uid,$category]);
-}else{
-
-          $pdo = new PDO("sqlite:MMDataBase.db");
-        	$getExistingRowsSqlStmt = "SELECT * FROM Scores WHERE CategoryName = :string";
-        	$stmt = $pdo->prepare($getExistingRowsSqlStmt);
-
-          $stmt->bindParam(':string', $category);
-        	$stmt->execute();
-        	$data = $stmt->fetchAll();
-          $score = intval($data[0]['Score']);
-          $score = $score + 5;
-
-          $pdo = new PDO("sqlite:MMDataBase.db");
-          $categoryCheckSqlStmt = "UPDATE Scores SET Score = :score WHERE UserId= :uid AND CategoryName= :category";
-          $stmt = $pdo->prepare($categoryCheckSqlStmt);
-          $stmt->bindParam(":score", $score);
-          $stmt->bindParam(':uid',$uid);
-          $stmt->bindParam(":category",$category);
-          $stmt->execute();
-  }
-}
-}
-
-// This function checks if a row holding the score of current category exists (see movie.php for further infromation)
-function categoryExists($string){
-    $uid = $_SESSION["UID"];
-
-	$uid = intval($uid);
-  //Check if searched movie exists in Movie table
-  	$pdo = new PDO("sqlite:MMDataBase.db");
-  	$movieCheckSqlStmt = "SELECT * FROM Scores WHERE CategoryName = :string AND UserId = :uid";
-  	$stmt = $pdo->prepare($movieCheckSqlStmt);
-  	$stmt->bindParam(':uid',$uid);
-    $stmt->bindParam(':string', $string);
-  	$stmt->execute();
-  	$result = $stmt->fetchAll();
-  	if(count($result) > 0){
-  		return true;
-  	}
-  	else{
-  		return false;
-  	}
-  }
-
-// Add movie to watchlist called using Ajax
-function addToWatch($string){
-	$userId = $_SESSION["UID"];
-	$pdo = new PDO("sqlite:MMDataBase.db");
-	$sql = "SELECT MID FROM Movies WHERE Title LIKE :string ";
-	$stmt = $pdo->prepare($sql);
-	$stmt->bindParam(':string',$string);
-	$stmt->execute();
-	$MID = intval($stmt->fetchColumn());
-	$sql = "INSERT INTO Watchlist VALUES(?, ?, 0)";
-	$insertStmt = $pdo->prepare($sql);
-    $insertStmt->execute([$userId, $MID]);
-	header('Location: search.php');// replace with hosted URL
-}
-
-if(isset($_POST['MovieTitle'])){
-	$movietitle = $_POST['MovieTitle'];
-	handlescores($movietitle);
-	addToWatch($movietitle);
-}
-
-if(noSpecialChar($input_term) == true){				//Make sure searched movie has no special characters
-	if(movieExistsInDb($input_term) == true){		// If searched movie exists in db
-			populateMovieFromDB($input_term);				// Populate page using information from DB
-	}else{
-		populateMovieOMDB($input_term);						//Else use OMDB information to populate page
-	}
-}else{
-	header('Location: search.php');// replace with hosted URL
-	exit();
 }
 
 
@@ -244,9 +249,12 @@ if(noSpecialChar($input_term) == true){				//Make sure searched movie has no spe
 					<h3>Plot:</h3>
 					<p><?= $plot ?></p>
 			</div>
+			<h3><?php echo $movieError ?></h3>
 			<div class="addtowtchlist" style="width:100%; float:center; height:5%;">
-
 				<button class="button" id="watch" onclick="watchmovie()">Watch</button>
+			</div>
+			<div class="searchMore" style="width:100%; float:center; height:5%;">
+				<button class="button" id="searchMore" onclick="searchMore()">Back to Search</button>
 			</div>
 		</div>
 	</div>
@@ -265,5 +273,9 @@ function watchmovie(){
 		alert(movtitle + " added to watchlist");
 	}
 	});
+}
+
+function searchMore() {
+	alert("searchmore");
 }
 </script>
