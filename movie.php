@@ -110,12 +110,12 @@
 
 		// add movie to user's watchlist
 		$movieId = $_POST['MovieId'];
-		$sql = "INSERT INTO Watchlist VALUES(?, ?, 0)";
+		$sqlInsertToWatchlist = "INSERT INTO Watchlist VALUES(?, ?, 0)";
 		$insertStmt = $pdo->prepare($sql);
     $insertStmt->execute([$userId, $movieId]);
 
-    $stmtFill = $pdo->query($sqlFilteredMovies);
-    $all = $stmtFill->fetchall();
+    // $stmtFill = $pdo->query($sqlFilteredMovies);
+    // $all = $stmtFill->fetchall();
 	}
 
   if(isset($_POST['NotCategory'])) {

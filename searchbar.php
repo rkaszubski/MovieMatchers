@@ -12,7 +12,7 @@ $title = $director = $actors = $category = $poster = $rated = $plot = "";
 $year = 0;
 $imdbRating = 0.0;
 $input_term = "";
-$pdo = new PDO("sqlite:MMDataBase.db"); //Establish Database connection
+// $pdo = new PDO("sqlite:MMDataBase.db"); //Establish Database connection
 
 
 // Function to ensure no special characters are used in movie name
@@ -205,7 +205,7 @@ function addToWatchlist($movieTitle) {
 // If Watch button is clicked, add to watchlist
 if(isset($_POST['MovieTitle'])) {
 	$titleOfMovie = trim($_POST['MovieTitle']);
-	addToWatchlist($titleOfMovie);
+	// addToWatchlist($titleOfMovie);
 }
 
 if (isset($_POST['search'])) {
@@ -262,6 +262,7 @@ if (isset($_POST['search'])) {
 </body>
 </html>
 <script>
+// This function is too overloaded for SQLite to handle, how can we support?
 function watchmovie(){
 	var movtitle = String(document.getElementById("title").textContent);
 	$.ajax({
