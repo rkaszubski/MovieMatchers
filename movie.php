@@ -9,10 +9,18 @@
     // Initialize PDO Object
     $pdo = new PDO("sqlite:MMDataBase.db");
 
+    $userId = intval($_SESSION["UID"]);
+    // initilize user scores with categories
+    // $sqlScoreFilter = "SELECT CategoryName,Score FROM Scores WHERE UserId=:uid ORDER BY Score DESC";
+    // $stmtScoreFilter = $pdo->prepare($sqlScoreFilter);
+    // $stmtScoreFilter->bindParam(':uid', $userId);
+    // $stmtScoreFilter->execute();
+    // $scoreFilter = $stmtScoreFilter->fetchAll();
+    // echo var_dump($scoreFilter);
 
-    $userId = intval($_SESSION["UID"]);//Get userID which is unique to user
-    $sqlWatchedMovies = "SELECT MovieId FROM Watchlist WHERE UserId=$userId"; //Get all movies in watch list that match current user ID
-    $sqlFilteredMovies = "SELECT * FROM Movies WHERE MID NOT IN ($sqlWatchedMovies)"; //Select all movies from movie table that are not already in current users watchlist
+    // query filtered Movies
+    $sqlWatchedMovies = "SELECT MovieId FROM Watchlist WHERE UserId=$userId";
+    $sqlFilteredMovies = "SELECT * FROM Movies WHERE MID NOT IN ($sqlWatchedMovies)";
     $stmtFill = $pdo->query($sqlFilteredMovies);
 	  $moviesArr = $stmtFill->fetchall();
 	?>
