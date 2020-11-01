@@ -5,24 +5,37 @@
   	{
   			header("Location: login.php");
   	}
-    //test
     // Initialize PDO Object
     $pdo = new PDO("sqlite:MMDataBase.db");
 
     $userId = intval($_SESSION["UID"]);
     // initilize user scores with categories
-    // $sqlScoreFilter = "SELECT CategoryName,Score FROM Scores WHERE UserId=:uid ORDER BY Score DESC";
-    // $stmtScoreFilter = $pdo->prepare($sqlScoreFilter);
-    // $stmtScoreFilter->bindParam(':uid', $userId);
-    // $stmtScoreFilter->execute();
-    // $scoreFilter = $stmtScoreFilter->fetchAll();
-    // echo var_dump($scoreFilter);
+    $sqlTopCategoriesByScoreByUser = "SELECT CategoryName FROM SCORES WHERE UserId=:uid ORDER BY Score DESC"; // Query top categories with the highest scores
+    $stmtTopCategoriesByScoreByUser = $pdo->prepare($sqlTopCategoriesByScoreByUser); //prepare satement
+    $stmtTopCategoriesByScoreByUser->bindParam(":uid", $userId); 							 // inject parameter information into Query
+    $stmtTopCategoriesByScoreByUser->execute();
 
-    // query filtered Movies
-    $sqlWatchedMovies = "SELECT MovieId FROM Watchlist WHERE UserId=$userId";
-    $sqlFilteredMovies = "SELECT * FROM Movies WHERE MID NOT IN ($sqlWatchedMovies)";
-    $stmtFill = $pdo->query($sqlFilteredMovies);
-	  $moviesArr = $stmtFill->fetchall();
+    // $topCategoriesByScoreByUser- All categories ordered from highest score to lowest
+    $topCategoriesByScoreByUser = $stmtTopCategoriesByScoreByUser->fetchAll();
+    $moviesArrFiltered = array();
+    foreach ($topCategoriesByScoreByUser as $cat) {
+      $category = "%" . $cat["CategoryName"] . "%";
+      // $stmtRandomMoviesLikeCategory -
+      $sqlWatchedMovies = "SELECT MovieId FROM Watchlist WHERE UserId=$userId";
+      // SELECT * FROM Movies WHERE Category LIKE '%Action%' MID NOT IN (SELECT MovieId FROM Watchlist WHERE UserId=11) ORDER BY random();
+      $sqlRandomMoviesLikeCategory = "SELECT * FROM Movies WHERE Category LIKE ? AND MID NOT IN ($sqlWatchedMovies) ORDER BY random()"; // ORDER BY random()
+      $stmtRandomMoviesLikeCategory = $pdo->prepare($sqlRandomMoviesLikeCategory);
+      //Bind variables
+      $stmtRandomMoviesLikeCategory->execute([$category]);
+      // All movies from specified category
+      $randomMoviesLikeCategory = $stmtRandomMoviesLikeCategory->fetchAll();
+      $moviesArrFiltered = array_merge($moviesArrFiltered, $randomMoviesLikeCategory);
+    }
+    $moviesArrFiltered = array_unique($moviesArrFiltered, SORT_REGULAR);
+    $moviesArr = array_values($moviesArrFiltered);
+
+    print_r($moviesArr);
+    echo count($moviesArr);
 	?>
 	<?php
 
@@ -146,6 +159,7 @@
 					<h2 id="dir">Director</h2>
 					<h2 id="year">Release Year</h2>
 					<h2 id="act">Actors</h2>
+          <h2 id="cat">Categories</h2>
 				</div>
 			</div>
 		</div>
@@ -164,6 +178,7 @@
 		document.getElementById("dir").innerHTML = "Director: " + movies[moviecount]["Director"];
 		document.getElementById("year").innerHTML ="Release Year: " + movies[moviecount]["ReleaseYear"];
 		document.getElementById("act").innerHTML = "Actors: " +movies[moviecount]["Actors"];
+    document.getElementById("cat").innerHTML = "Category: " +movies[moviecount]["Category"];
 	}
 
   function pass() {
@@ -179,7 +194,7 @@
 		data,
 		success: function(data)
 		{
-			alert(movietitle + " disliked");
+			console.log(movietitle + " disliked");
 			nextmovie();
 		}
 		});
@@ -205,7 +220,7 @@
 		data,
 		success: function(data)
 		{
-			alert(movietitle + " added to watchlist");
+			console.log(movietitle + " added to watchlist");
 			nextmovie();
 		}
 		});
