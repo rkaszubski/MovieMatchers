@@ -17,22 +17,30 @@
 
     // $topCategoriesByScoreByUser- All categories ordered from highest score to lowest
     $topCategoriesByScoreByUser = $stmtTopCategoriesByScoreByUser->fetchAll();
-    $moviesArrFiltered = array();
-    foreach ($topCategoriesByScoreByUser as $cat) {
-      $category = "%" . $cat["CategoryName"] . "%";
-      // $stmtRandomMoviesLikeCategory -
-      $sqlWatchedMovies = "SELECT MovieId FROM Watchlist WHERE UserId=$userId";
-      // SELECT * FROM Movies WHERE Category LIKE '%Action%' MID NOT IN (SELECT MovieId FROM Watchlist WHERE UserId=11) ORDER BY random();
-      $sqlRandomMoviesLikeCategory = "SELECT * FROM Movies WHERE Category LIKE ? AND MID NOT IN ($sqlWatchedMovies) ORDER BY random()"; // ORDER BY random()
-      $stmtRandomMoviesLikeCategory = $pdo->prepare($sqlRandomMoviesLikeCategory);
-      //Bind variables
-      $stmtRandomMoviesLikeCategory->execute([$category]);
-      // All movies from specified category
-      $randomMoviesLikeCategory = $stmtRandomMoviesLikeCategory->fetchAll();
-      $moviesArrFiltered = array_merge($moviesArrFiltered, $randomMoviesLikeCategory);
+    if ($topCategoriesByScoreByUser != false) {
+      $moviesArrFiltered = array();
+      foreach ($topCategoriesByScoreByUser as $cat) {
+        $category = "%" . $cat["CategoryName"] . "%";
+        // $stmtRandomMoviesLikeCategory -
+        $sqlWatchedMovies = "SELECT MovieId FROM Watchlist WHERE UserId=$userId";
+        // SELECT * FROM Movies WHERE Category LIKE '%Action%' MID NOT IN (SELECT MovieId FROM Watchlist WHERE UserId=11) ORDER BY random();
+        $sqlRandomMoviesLikeCategory = "SELECT * FROM Movies WHERE Category LIKE ? AND MID NOT IN ($sqlWatchedMovies) ORDER BY random()"; // ORDER BY random()
+        $stmtRandomMoviesLikeCategory = $pdo->prepare($sqlRandomMoviesLikeCategory);
+        //Bind variables
+        $stmtRandomMoviesLikeCategory->execute([$category]);
+        // All movies from specified category
+        $randomMoviesLikeCategory = $stmtRandomMoviesLikeCategory->fetchAll();
+        $moviesArrFiltered = array_merge($moviesArrFiltered, $randomMoviesLikeCategory);
+      }
+      $moviesArrFiltered = array_unique($moviesArrFiltered, SORT_REGULAR);
+      $moviesArr = array_values($moviesArrFiltered);
+    } else {
+      $sqlNoCategoryOrderByRand = "SELECT * FROM Movies ORDER BY random()";
+      $stmtNoCategoryOrderByRand = $pdo->prepare($sqlNoCategoryOrderByRand);
+      $stmtNoCategoryOrderByRand->execute();
+      $moviesArr = $stmtNoCategoryOrderByRand->fetchAll();
     }
-    $moviesArrFiltered = array_unique($moviesArrFiltered, SORT_REGULAR);
-    $moviesArr = array_values($moviesArrFiltered);
+
 
     // print_r($moviesArr);
     // echo "Movies array has " . count($moviesArr) . " rows";
@@ -111,8 +119,8 @@
 		// add movie to user's watchlist
 		$movieId = $_POST['MovieId'];
 		$sqlInsertToWatchlist = "INSERT INTO Watchlist VALUES(?, ?, 0)";
-		$insertStmt = $pdo->prepare($sql);
-    $insertStmt->execute([$userId, $movieId]);
+		$stmtInsertToWatchlist = $pdo->prepare($sqlInsertToWatchlist);
+    $stmtInsertToWatchlist->execute([$userId, $movieId]);
 
     // $stmtFill = $pdo->query($sqlFilteredMovies);
     // $all = $stmtFill->fetchall();
