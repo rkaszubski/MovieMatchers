@@ -36,6 +36,17 @@ function getOmdbRecord($movieName, $ApiKey)
 	$json = file_get_contents($path);
 	return json_decode($json, TRUE);
 }
+
+function movieExistsinDB($movieTitle) {
+	$pdo = new PDO("sqlite:MMDataBase.db");
+	$sqlMovieExistsInDB = "SELECT MID FROM Movies WHERE Title LIKE :title "; //Query to check if movie with Specific name is already in Database
+	$stmtMovieExistsInDB = $pdo->prepare($sqlMovieExistsInDB);
+	$stmtMovieExistsInDB->bindParam(':title',$movieTitle);
+	$stmtMovieExistsInDB->execute();
+	$movieExistsInDB = $stmtMovieExistsInDB->fetchColumn();
+	// this will return the corresponding MID or false
+	return $movieExistsInDB;
+}
 //-------------- swipe methods --------------//
 function AddCategories($userId, $catArr) {
 	if (count($catArr) > 0) {
@@ -105,13 +116,7 @@ function populateMovie($movieTitle) {
 
 	global $title,$director,$actors,$year,$imdbRating,$category,$poster,$rated,$plot; // Using global varables to store information that will be used later
 	$pdo = new PDO("sqlite:MMDataBase.db");
-	$sqlMovieExistsInDB = "SELECT MID FROM Movies WHERE Title LIKE :title "; //Query to check if movie with Specific name is already in Database
-	$stmtMovieExistsInDB = $pdo->prepare($sqlMovieExistsInDB);
-	$stmtMovieExistsInDB->bindParam(':title',$movieTitle);
-	$stmtMovieExistsInDB->execute();
-	$movieExistsInDB = $stmtMovieExistsInDB->fetchColumn();
-
-	if ($movieExistsInDB != false) {
+	if (movieExistsinDB($mTitle) != false) {
 		// movie exists in database, use database to populate
 		$sqlGetMovieDataByName = "SELECT * FROM Movies WHERE Title LIKE :title ";						// Query to select movie with specific name
 		$stmtGetMovieDataByName = $pdo->prepare($sqlGetMovieDataByName);																				// Prepare Query
@@ -205,7 +210,7 @@ function addToWatchlist($movieTitle) {
 // If Watch button is clicked, add to watchlist
 if(isset($_POST['MovieTitle'])) {
 	$titleOfMovie = trim($_POST['MovieTitle']);
-	// addToWatchlist($titleOfMovie);
+	addToWatchlist($titleOfMovie);
 }
 
 if (isset($_POST['search'])) {
@@ -244,7 +249,7 @@ if (isset($_POST['search'])) {
 					<h3>Year: <?= $year ?> </h3><br>
 					<h3>Imdb Score: <?= $imdbRating ?></h3><br>
 					<h3>Actors: <?= $actors ?> </h3><br>
-					<h3>Genre: <?= $category ?></h3><br>
+					<h3 id="category">Genre: <?= $category ?></h3><br>
 					<h3>Rated: <?= $rated ?></h3><br>
 					<h3>Plot:</h3>
 					<p><?= $plot ?></p>
@@ -264,14 +269,19 @@ if (isset($_POST['search'])) {
 <script>
 // This function is too overloaded for SQLite to handle, how can we support?
 function watchmovie(){
-	var movtitle = String(document.getElementById("title").textContent);
+	var titleOfMovie = String(document.getElementById("title").textContent);
+	var category = String(document.getElementById("category").textContent);
+	const data = {
+		MovieTitle: titleOfMovie,
+		Category: category
+	};
 	$.ajax({
 	type: 'POST',
 	url: 'searchbar.php',
-	data: {'MovieTitle': movtitle},
+	data,
 	success: function(data)
 	{
-		alert(movtitle + " added to watchlist");
+		alert(titleOfMovie + " added to watchlist");
 	}
 	});
 }
