@@ -1,7 +1,5 @@
 <?php
 
-namespace User;
-
 class User {
   private $uid;
   private $username;

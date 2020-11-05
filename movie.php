@@ -1,10 +1,10 @@
 <?php
 //If not logged in redirect to login page
-    session_start();
-    if (!isset($_SESSION["UID"]))
-  	{
-  			header("Location: login.php");
-  	}
+    // session_start();
+    // if (!isset($_SESSION["UID"]))
+  	// {
+  	// 		header("Location: login.php");
+  	// }
     // Initialize PDO Object
     $pdo = new PDO("sqlite:MMDataBase.db");
 
