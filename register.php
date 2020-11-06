@@ -1,8 +1,19 @@
 <?php
+include('includes/autoloader.inc.php');
 $usernameErr = $passwordErr = $emailErr = $globalErr = "";
 $attUsername = $attPassword = $attEmail = "";
 $username = $password = $email = "";
 
+if(isset($_POST["username"]) && isset($_POST["password"]) && isset($_POST["email"])) {
+	$username = $_POST["username"];
+	$email = $_POST["password"];
+	$password = $_POST["email"];
+	$account = new Account();
+	$res = $account->registerUser($username, $email, $password);
+	echo $res;
+}
+
+/*
 function noSpecialChar($string) {
 	if (preg_match('/[\'^£%&*()}{#~?><>,|=_+¬-]/', $string)) {
 	    // one or more of the 'special characters' found in $string
@@ -61,6 +72,7 @@ function noSpecialChar($string) {
 			}
 		}
 	}
+	*/
 ?>
 
 
@@ -94,7 +106,7 @@ function noSpecialChar($string) {
 					<span class="help-block"><?php echo $passwordErr; ?></span><br>
 					<span class="help-block"><?php echo $globalErr; ?></span>
 					<input type="submit" value="Create Account" class="action-button"></input><br>
-					<a href="index.php">Log In</a>
+					<a href="login.php">Log In</a>
 					</fieldset>
 				</form>
 			</div>

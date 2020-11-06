@@ -10,7 +10,6 @@ class Dbh {
   // private $dbName = 'ElonsLilBackup';
   // private	$user = 'nhester';
   // private	$pwd = 'XaeA-123';
-
   protected function connect() {
     $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->dbName;
     try {
