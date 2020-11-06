@@ -15,5 +15,3 @@ function myAutoLoader($className) {
 // function myAutoLoader($className) {
 //   include 'classes/' . str_replace('\\', "/", $className) . '.class.php';
 // }
-
- ?>

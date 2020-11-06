@@ -10,69 +10,9 @@ if(isset($_POST["username"]) && isset($_POST["password"]) && isset($_POST["email
 	$password = $_POST["email"];
 	$account = new Account();
 	$res = $account->registerUser($username, $email, $password);
-	echo $res;
+	echo "result = " . $res;
+	//header("Location: login.php");
 }
-
-/*
-function noSpecialChar($string) {
-	if (preg_match('/[\'^£%&*()}{#~?><>,|=_+¬-]/', $string)) {
-	    // one or more of the 'special characters' found in $string
-			return false;
-	}
-	return true;
-}
-
-	if(isset($_POST["username"]) && isset($_POST["password"]) && isset($_POST["email"]))
-	{
-		$attUsername = trim($_POST["username"]);
-		$attPassword = trim($_POST["password"]);
-		$attEmail = trim($_POST["email"]);
-		// assert inputs are not empty
-		if (empty($attUsername) ||
-				empty($attPassword) ||
-				empty($attEmail))
-		{
-			// fields were empty after trimming
-			$globalErr = "error, all fields must be filled";
-		} else if (!noSpecialChar($attUsername) || strlen($attUsername) < 3) {
-			// Username has special Characters
-			$usernameErr = "Username must be 4 characters or longer and special Characters are not allowed, please change your username and try again";
-		} else if (!noSpecialChar($attEmail) || strlen($attEmail) < 3) {
-			// email has special characters
-			$emailErr = "Special Characters are not allowed, please use a valid email and try again";
-		} else if (!noSpecialChar($attPassword) || strlen($attPassword) < 3) {
-			// Password has special Characters
-			$passwordErr = "Password must be 5 characters or longer and special characters are not allowed, please change your password and try again";
-		} else {
-			// ALL INPUT IS SAFE (no risk of sql injection/xss attacks)
-			$username = $attUsername;
-			$email = $attEmail;
-			$password = md5($attPassword);
-
-			$pdo = new PDO("sqlite:MMDataBase.db");
-			$sqlUEPrep = $pdo->prepare("SELECT UID FROM Users WHERE username=?");
-			$sqlUEPrep->execute([$username]);
-			$sqlUsernameExists = $sqlUEPrep->fetchColumn();
-			if ($sqlUsernameExists == false) {
-				// insert username, email, role, and init - init is a value used to determine if a user goes to "personalize" page
-				$newUserAccountInsertSqlStmt = "INSERT INTO Users (username, email, role, init) VALUES(?, ?, 'user', 0)";
-				$pdo->prepare($newUserAccountInsertSqlStmt)->execute([$username, $email]);
-
-				$stmt = $pdo->prepare("SELECT UID FROM Users WHERE username=?");
-				$stmt->execute([$username]);
-				$uid = $stmt->fetchColumn();
-
-				$newUserPasswordInsertSqlStmt = "INSERT INTO Passwords (Password, UserId) VALUES(?, ?)";
-				$pdo->prepare($newUserPasswordInsertSqlStmt)->execute([$password, $uid]);
-
-				echo "Account successfully created";
-				header("Location: login.php");
-			} else {
-				$usernameErr = "Username already exists";
-			}
-		}
-	}
-	*/
 ?>
 
 
