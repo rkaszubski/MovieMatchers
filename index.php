@@ -20,18 +20,8 @@ function myAutoLoader($className) {
 </head>
 <body>
   <h1> hi </h1>
-  <?php
-  // public function __construct($uid, $username, $email, $role, $init) {
-  //   $this->uid = $uid;
-  //   $this->username = $username;
-  //   $this->email = $email;
-  //   $this->role = $role;
-  //   $this->init = $init;
-  // }
-    // $usersObj = new User\User(11, 'nakana', 'nakana@gmail.com','user',0);
-    // echo $usersObj->getUID();
-  $userObj = new UsersView();
-  $userObj->showUsers();
-   ?>
+<?php
+  header("Location: login.php");
+ ?>
 </body>
 </html>

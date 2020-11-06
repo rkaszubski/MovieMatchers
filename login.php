@@ -9,6 +9,7 @@
 		if ($user == null) {
 			echo "user object came back as " . $user;
 		} else {
+			echo $_SESSION["UID"];
 			header("Location: movie.php");
 		}
 	}

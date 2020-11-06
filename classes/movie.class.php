@@ -1,9 +1,5 @@
 <?php
 
-
-namespace Movie;
-
-
 class Movie {
   private int $mid;
   private string $title;

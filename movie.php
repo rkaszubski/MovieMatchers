@@ -1,11 +1,7 @@
 <?php
-//If not logged in redirect to login page
-    // session_start();
-    // if (!isset($_SESSION["UID"]))
-  	// {
-  	// 		header("Location: login.php");
-  	// }
-    // Initialize PDO Object
+    include('includes/autoloader.inc.php');
+    $UV = (new UserView)->session();
+    echo $UV;
     $pdo = new PDO("sqlite:MMDataBase.db");
 
     $userId = intval($_SESSION["UID"]);

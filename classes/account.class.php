@@ -22,6 +22,11 @@ class Account {
     if (md5($password) != $hashedPassword) {
       return "password incorrect";
     }
+    $userView = new UserView();
+    $userView->setUserSessionData($user);
+    if (!isset($_SESSION["UID"])) {
+      return "SESSION DATA NOT SET";
+    }
     return $user;
   }
 
@@ -31,6 +36,6 @@ class Account {
     if (empty($username) || empty($password)) {
       return "No empty strings";
     }
-    // logic for creating a new user account 
+    // logic for creating a new user account
   }
 }
