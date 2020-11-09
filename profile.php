@@ -10,9 +10,19 @@
 
 	$pdo = new PDO("sqlite:MMDataBase.db");
 	$sqlUserWatchlistMID = "SELECT MovieId FROM Watchlist WHERE UserId=?"; //Query to get all movies
+	$sqlRemoveMovieFromWatchList = "DELETE FROM Watchlist WHERE UserId=? AND MovieId = ?";
 	$stmt = $pdo->prepare($sqlUserWatchlistMID); //Prepare Statement
 	$stmt->execute([$uid]);											 // Inject variable information into query and Execute
 	$userWatchlistMID = $stmt->fetchAll();			 // Get all records from executing query
+
+
+	if(isset($_POST['selectedMovie'])){
+		$pdo = new PDO("sqlite:MMDataBase.db");
+			$removeMid = $_POST['selectedMovie'];
+			$remove = $pdo->prepare($sqlRemoveMovieFromWatchList);
+			$remove->execute([$uid,$removeMid]);
+			header("Location: profile.php");
+	}
 
 ?>
 <html>
@@ -109,6 +119,8 @@
 								//This code injects the HTML div that populates the movie information on the Profile Page
 							  echo"<div class = watchlistmovie>
 										<img src = '$poster'>
+										<div class = 'movieOverlay'></div>
+										<div class = 'removeMovie'> <button id = $mid value = $mid onclick = 'getMID(this.value)'>Remove</button> </div>
 										<br>
 										<center>
 												<h3 style = 'color:white;'>$title<h3>
@@ -116,11 +128,20 @@
 								</div>";
 						}
 						?>
+						<form style= "display: none;" id="deleteMovie" method="post">
+							<input id = "selectedMovie" name ="selectedMovie" type="text">
+						</form>
 					</div>
 			</div>
 		<div>
 			<?php include('components/footer.php'); ?>
 	</body>
-
-
 </html>
+<script>
+
+function getMID(mid){
+	document.getElementById("selectedMovie").value = mid;
+	document.getElementById("deleteMovie").submit();
+}
+
+</script>
