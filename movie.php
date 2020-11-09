@@ -1,3 +1,10 @@
+<?php
+include_once ('classes/UserView.class.php');
+include_once ('classes/User.class.php');
+$userSession = new UserView();
+$userSession->session();
+echo "UserID: " . $_SESSION['uid'] . "<br>Username: " . $_SESSION['username'] . "<br>Email: " . $_SESSION['email'] . "<br>Role: " . $_SESSION['role'] . "<br>Init: " . $_SESSION['init'];
+?>
 <html>
 	<head>
 		<SCRIPT SRC="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></SCRIPT>

@@ -1,4 +1,5 @@
 <?php
+include_once ('User.class.php');
 
 class UserView {
 
@@ -14,7 +15,7 @@ class UserView {
       $email = $userObj->getEmail();
       $role = $userObj->getRole();
       $init = $userObj->getInit();
-      $_SESSION['UID'] = $uid;
+      $_SESSION['uid'] = $uid;
       $_SESSION['username'] = $username;
       $_SESSION['email'] = $email;
       $_SESSION['role'] = $role;
