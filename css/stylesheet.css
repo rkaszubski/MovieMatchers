@@ -242,6 +242,56 @@ body {
   -webkit-transform: scale(1.1); /* Safari 3-8 */
   transform: scale(1.1);
 }
+
+
+/* Personalize page */
+.categories{
+	position: absolute;
+	left: 25%;
+	right:22%;
+	top: 40%;
+	color: white;
+
+}
+
+.categories li{
+	font-size: 25px;
+	padding: 10px;
+	border-radius: 6px;
+	margin-top: 1%;
+	margin-left: 1%;
+	float: left;
+	color: white;
+	background-color: #4d0013;
+	list-style-type: none;
+	border-style: solid;
+}
+
+.categories .categorySubmit{
+	margin-top: 2%;
+	color: white;
+	background: none;
+	font-size: 25px;
+	border-style: solid;
+	border-color: white;
+	position: absolute;
+	top: 100%;
+	right:90%;
+	padding: 10px;
+	transition: transform 0.5s;
+	border-radius: 6px;
+}
+
+.categories .categorySubmit:hover{
+	transform: scale(1.2);
+}
+
+
+
+
+
+
+/* end of personalize*/
 table, th, td {
 	border: 1px solid black;
 	border-collapse: collapse;
