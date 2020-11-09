@@ -5,6 +5,11 @@ include_once ('User.class.php');
 
 class Account {
 
+  public function getUserWatchlist($uid) {
+      $userControl = new UserController();
+      $watchlist = $userControl->getWatchlistByUid($uid);
+      return $watchlist;
+  }
   public function adjustUserScore($amt, $userId, $catArr) {
     // if (count($catArr) > 0) {
     //   $pdo = new PDO("sqlite:MMDataBase.db");

@@ -3,6 +3,16 @@ include_once ('dbh.class.php');
 include_once ('User.class.php');
 
 class UserController extends Dbh {
+  
+  public function getWatchlistByUid($uid) {
+    $sqlMidList = "SELECT movieId FROM Watchlist WHERE userId=$uid";
+    $sql = "SELECT * FROM Movies WHERE MID IN ($sqlMidList)";
+    $stmt = $this->connect()->prepare($sql);
+    $stmt->execute();	
+    $data = $stmt->fetchAll();
+    return $data;
+  }
+
   // returns <> if not found, returns UID if found
   public function getUserByUsername(string $username) {
     $sql = "SELECT * FROM Users WHERE username=:username";
