@@ -5,7 +5,6 @@ class UserView {
 
   public function setUserSessionData($userObj) {
     session_start();
-
     if (isset($_SESSION["UID"])) {
       return "User session data is already set";
     }

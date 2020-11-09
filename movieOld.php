@@ -150,7 +150,6 @@
 					<h1 id="title">Movie Title</h1>
 				</div>
 				<div class="swipe">
-
 					<button class="button" id="pass" onclick="pass()">Pass</button>
 				</div>
 				<div class="movieposter">

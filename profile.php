@@ -1,14 +1,16 @@
 <?php
-
-	session_start();
-	if (!isset($_SESSION["UID"]))
-	{
-			header("Location: login.php");
-	}
-	$user = $_SESSION["username"];
-	$uid = intval($_SESSION["UID"]);
-
-	$pdo = new PDO("sqlite:MMDataBase.db");
+	include_once ('classes/UserView.class.php');
+	include_once ('classes/User.class.php');
+	include_once ('classes/swipe.class.php');
+	include_once ('classes/Account.class.php');
+	
+	$userSession = new UserView();
+	$userSession->session();
+	echo "UserID: " . $_SESSION['uid'] . 
+		"<br>Username: " . $_SESSION['username'] . 
+		"<br>Email: " . $_SESSION['email'] . 
+		"<br>Role: " . $_SESSION['role'] . 
+		"<br>Init: " . $_SESSION['init'] . "<br>";
 	$sqlUserWatchlistMID = "SELECT MovieId FROM Watchlist WHERE UserId=?"; //Query to get all movies
 	$stmt = $pdo->prepare($sqlUserWatchlistMID); //Prepare Statement
 	$stmt->execute([$uid]);											 // Inject variable information into query and Execute
@@ -29,7 +31,7 @@
 				<center><h1 style="border-bottom:1px; border-bottom-style:solid;color:white;"><?php echo $user ?>'s Recommendations</h1></center>
 					<div class= watchlist style="height:80%; width:90%;margin-left:10%; margin-right:5%; ">
 				<?php
-						$pdo = new PDO("sqlite:MMDataBase.db");
+						// db call
 						$movieErrorLog = "";
 						$sqlTopCategoriesByScoreByUser = "SELECT CategoryName FROM SCORES WHERE UserId=:uid ORDER BY Score DESC"; // Query to get top 5 categories with the highest scores
 						$stmtTopCategoriesByScoreByUser = $pdo->prepare($sqlTopCategoriesByScoreByUser); //prepare satement

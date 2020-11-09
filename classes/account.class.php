@@ -4,6 +4,32 @@ include_once ('UserView.class.php');
 include_once ('User.class.php');
 
 class Account {
+
+  public function adjustUserScore($amt, $userId, $catArr) {
+    // if (count($catArr) > 0) {
+    //   $pdo = new PDO("sqlite:MMDataBase.db");
+		// 	$sqlCatExists = "SELECT CategoryName FROM Scores WHERE UserId=:uid AND CategoryName=:category"; // Get all records containing scores for categories specific to current user
+		// 	$sqlInsertCat = "INSERT INTO Scores (UserId, CategoryName, Score) VALUES (:uid,:category,100)"; // Query to add a category if a record does not already exist
+		// 	foreach ($catArr as $cat) {
+		// 		$category = trim($cat); // remove spaces
+		// 		$stmtCatExists = $pdo->prepare($sqlCatExists);
+		// 		$stmtCatExists->bindParam(':uid', $userId);
+		// 		$stmtCatExists->bindParam(':category', $category);
+		// 		$stmtCatExists->execute();
+		// 		$catExists = $stmtCatExists->fetchColumn();
+		// 		if ($catExists == false) { //If recode does not already exist insert it into table with initial score of 100
+		// 			$stmtInsertCat = $pdo->prepare($sqlInsertCat);
+		// 			$stmtInsertCat->bindParam(':uid', $userId);
+		// 			$stmtInsertCat->bindParam(':category', $category);
+		// 			$stmtInsertCat->execute();
+		// 		}
+		// 		// else do nothing, category exists
+		// 	}
+		// } else {
+		// 	echo "Error, category array is empty";
+		// }
+  }
+
   public function loginUser(string $paramUsername, string $paramPassword) {
     $username = trim($paramUsername);
     $password = trim($paramPassword);
