@@ -1,16 +1,21 @@
 <?php
-include('includes/autoloader.inc.php');
+include_once ('classes/account.class.php');
 $usernameErr = $passwordErr = $emailErr = $globalErr = "";
 $attUsername = $attPassword = $attEmail = "";
 $username = $password = $email = "";
 
 if(isset($_POST["username"]) && isset($_POST["password"]) && isset($_POST["email"])) {
 	$username = $_POST["username"];
-	$email = $_POST["password"];
-	$password = $_POST["email"];
+	$password = $_POST["password"];
+	$email = $_POST["email"];
 	$account = new Account();
 	$res = $account->registerUser($username, $email, $password);
-	echo "result = " . $res;
+	if ($res == 'success') {
+		echo 'check database, this may have worked';
+	}
+	else {
+		echo "rubbah: " . $res;
+	}
 	//header("Location: login.php");
 }
 ?>

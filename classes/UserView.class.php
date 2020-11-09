@@ -8,11 +8,22 @@ class UserView {
     if (isset($_SESSION["UID"])) {
       return "User session data is already set";
     }
-    $_SESSION['UID'] = $userObj->getUID();
-    $_SESSION['username'] = $userObj->getUsername();
-    $_SESSION['email'] = $userObj->getEmail();
-    $_SESSION['role'] = $userObj->getRole();
-    $_SESSION['init'] = $userObj->getInit();
+    if (is_object($userObj) && !is_null($userObj) && !is_bool($userObj)) {
+      $uid = $userObj->getUID();
+      $username = $userObj->getUsername();
+      $email = $userObj->getEmail();
+      $role = $userObj->getRole();
+      $init = $userObj->getInit();
+      $_SESSION['UID'] = $uid;
+      $_SESSION['username'] = $username;
+      $_SESSION['email'] = $email;
+      $_SESSION['role'] = $role;
+      $_SESSION['init'] = $init;
+      return true;
+    } else {
+      // object is not an object, or is null, or is a boolean
+      return false;
+    }
   }
 
   public function session() {

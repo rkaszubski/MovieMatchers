@@ -3,13 +3,15 @@
 
 class Dbh {
   private $host = 'localhost';
-  private $dbName = 'MMDatabase';
   private $user = 'root';
   private $pwd = 'Pauahi808';
-  // private $host = '107.180.21.70';
-  // private $dbName = 'ElonsLilBackup';
-  // private	$user = 'nhester';
-  // private	$pwd = 'XaeA-123';
+  private $dbName = 'MMDatabase';
+
+  // private $host = 'localhost';
+  // private $user = 'elbuser';
+  // private $pwd = 'Xlp9K^8thp7nQu6L';
+  // private $dbName = 'ELBackup';
+
   protected function connect() {
     $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->dbName;
     try {
@@ -19,7 +21,7 @@ class Dbh {
     } catch (PDOException $e) {
       $error_message = $e->getMessage();
   		// include('error.php');
-      echo $e;
+      echo $error_message;
   		exit();
     }
   }

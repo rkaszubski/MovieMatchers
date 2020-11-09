@@ -1,6 +1,8 @@
 <?php
-class UserController extends Dbh {
+include_once ('dbh.class.php');
+include_once ('User.class.php');
 
+class UserController extends Dbh {
   // returns <> if not found, returns UID if found
   public function getUserByUsername(string $username) {
     $sql = "SELECT * FROM Users WHERE username=:username";
@@ -8,8 +10,8 @@ class UserController extends Dbh {
     $stmt->bindParam(':username', $username);
     $stmt->execute();
     $results = $stmt->fetch();
-    if ($results != null) {
-      $user = new User($results["UID"],
+    if ($results != false) {
+      $user = new User($results["uid"],
                     $results["username"],
                     $results["email"],
                     $results["role"],
@@ -25,10 +27,10 @@ class UserController extends Dbh {
     $stmt->bindParam(':email', $email);
     $stmt->execute();
     $results = $stmt->fetch();
-    if ($results != null) {
+    if ($results != false) {
       $user = new User
       (
-        $results["UID"],
+        $results["uid"],
         $results["username"],
         $results["email"],
         $results["role"],
@@ -40,13 +42,13 @@ class UserController extends Dbh {
   }
 
   public function getPasswordByUid(string $uid) {
-    $sql = "SELECT * FROM Passwords WHERE UserId=:uid";
+    $sql = "SELECT password FROM Passwords WHERE UserId=:uid";
     $stmt = $this->connect()->prepare($sql);
     $stmt->bindParam(':uid', $uid);
     $stmt->execute();
-    $results = $stmt->fetch();
-    if ($results != null) {
-      $hashedPassword = $results["Password"];
+    $resultPassword = $stmt->fetchColumn();
+    if ($resultPassword != false) {
+      $hashedPassword = $resultPassword;
       return $hashedPassword;
     }
     return null;
@@ -54,33 +56,25 @@ class UserController extends Dbh {
 
   public function insertUser(string $username, string $email, string $password) {
     // get user id and hash password
-    $uid = (new IDGenerator)->getNewUserId();
     $pwd = md5($password);
     // prepare, execute insert User statement
-    $sql = "INSERT INTO Users (uid, username, email, role, init) VALUES(:uid, :username, :email, 'user', 0)";
+    $sql = "INSERT INTO Users (username, email, role, init) VALUES(:username, :email, 'user', 0)";
     $stmt = $this->connect()->prepare($sql);
-    $stmt->bindParam(':uid', $uid);
     $stmt->bindParam(':username', $username);
     $stmt->bindParam(':email', $email);
-    $stmt->execute();
-
-    // prepare, execute password storage insert stmt
-    $sqlPassword = "INSERT INTO Passwords (Password, UserId) VALUES(:password, :userid)";
-    $stmtPassword = $this->connect()->prepare($sqlPassword);
-    $stmtPassword->bindParam(':password', $pwd);
-    $stmtPassword->bindParam(':userid', $uid);
-    $stmtPassword->execute();
-
-    return 'success';
+    if ($stmt->execute()) {
+      $stmtUid = $this->connect()->prepare("SELECT uid FROM Users WHERE Username=:usern");
+      $stmtUid->bindParam(':usern', $username);
+      $stmtUid->execute();
+      $uid = $stmtUid->fetchColumn();
+      // prepare, execute password storage insert stmt
+      $sqlPassword = "INSERT INTO Passwords (Password, UserId) VALUES(:password, :userid)";
+      $stmtPassword = $this->connect()->prepare($sqlPassword);
+      $stmtPassword->bindParam(':password', $pwd);
+      $stmtPassword->bindParam(':userid', $uid);
+      $stmtPassword->execute();
+      return 'success';
+    }
+    return 'failure';
   }
-
-  public function insertPassword(int $uid, string $password) {
-    $sql = "INSERT INTO Passwords (Password, UserId) VALUES(:password, :userid)";
-    $stmt = $this->connect()->prepare($sql);
-    $stmt->bindParam(':password', $password);
-    $stmt->bindParam(':userid', $uid);
-    $success = $stmt->execute();
-    return $success;
-  }
-
 }

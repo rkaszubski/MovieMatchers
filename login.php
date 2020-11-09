@@ -1,22 +1,22 @@
 <?php
-	include('includes/autoloader.inc.php');
-
+	include_once ('classes/account.class.php');
+	$logonError = "";
 	if(isset($_POST["username"]) && isset($_POST["password"])) {
 		$username = $_POST["username"];
 		$password = $_POST["password"];
-		$acc = new Account();
-		$user = $acc->loginUser($username, $password);
-		if ($user == null) {
-			echo "user object came back as " . $user;
-		} else {
-			echo $_SESSION["UID"];
+		$loginFunc = new Account();
+		$result = $loginFunc->loginUser($username, $password);
+		if ($result == 'success') {
 			header("Location: movie.php");
+		} else {
+			$logonError = $result;
 		}
 	}
 ?>
 <html>
 		<title>Login</title>
 		<link rel="stylesheet" href="css/stylesheet.css">
+		<link rel="stylesheet" href="css/register.css">
 		<link rel="icon" href="assets/favicon/favicon.ico">
 	</head>
 	<body>
@@ -30,7 +30,8 @@
 					<fieldset>
 					<h2 class="fs-title">Login</h2>
 					<input type="text" placeholder="username" name="username" required></input>
-					<input type="password" placeholder="password" name="password" required></input>
+					<input type="password" placeholder="password" name="password" required></input><br>
+					<span class="help-block"><?php echo $logonError; ?></span>
 					<input type="submit" value="Login" class = action-button></input><br>
 
 					<a href="register.php">Register Now</a>
