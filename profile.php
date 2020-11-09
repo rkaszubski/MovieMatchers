@@ -6,11 +6,11 @@
 	
 	$userSession = new UserView();
 	$userSession->session();
-	echo "UserID: " . $_SESSION['uid'] . 
-		"<br>Username: " . $_SESSION['username'] . 
-		"<br>Email: " . $_SESSION['email'] . 
-		"<br>Role: " . $_SESSION['role'] . 
-		"<br>Init: " . $_SESSION['init'] . "<br>";
+	// echo "UserID: " . $_SESSION['uid'] . 
+	// 	"<br>Username: " . $_SESSION['username'] . 
+	// 	"<br>Email: " . $_SESSION['email'] . 
+	// 	"<br>Role: " . $_SESSION['role'] . 
+	// 	"<br>Init: " . $_SESSION['init'] . "<br>";
 	$user = $_SESSION['username'];
 ?>
 <html>
