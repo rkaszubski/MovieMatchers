@@ -1,10 +1,13 @@
 <?php
-//if not logged in redirect to login page
-    session_start();
-    if (!isset($_SESSION["UID"]))
-    {
-				header("Location: login.php");
-    }
+include_once ('classes/UserView.class.php');
+$userSession = new UserView();
+$userSession->session();
+echo "UserID: " . $_SESSION['uid'] . 
+	"<br>Username: " . $_SESSION['username'] . 
+	"<br>Email: " . $_SESSION['email'] . 
+	"<br>Role: " . $_SESSION['role'] . 
+	"<br>Init: " . $_SESSION['init'] . 
+	"<br>";
 ?>
 
 <html>
