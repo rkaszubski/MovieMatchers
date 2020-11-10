@@ -5,7 +5,7 @@ class UserView {
 
   public function setUserSessionData($userObj) {
     session_start();
-    if (isset($_SESSION["UID"])) {
+    if (isset($_SESSION["uid"])) {
       return "User session data is already set";
     }
     if (is_object($userObj) && !is_null($userObj) && !is_bool($userObj)) {
@@ -28,7 +28,7 @@ class UserView {
 
   public function session() {
     session_start();
-    if (!isset($_SESSION["UID"])) {
+    if (!isset($_SESSION["UIuidD"])) {
       return "User session data is MISSING";
     }
   }

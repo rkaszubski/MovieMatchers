@@ -2,7 +2,7 @@
 	include_once ('classes/UserView.class.php');
 	include_once ('classes/User.class.php');
 	include_once ('classes/swipe.class.php');
-	include_once ('classes/Account.class.php');
+	include_once ('classes/account.class.php');
 	
 	$userSession = new UserView();
 	$userSession->session();

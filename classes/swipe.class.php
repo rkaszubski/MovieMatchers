@@ -1,26 +1,25 @@
 <?php
 include_once ('dbh.class.php');
-include_once ('movie.class.php');
-
-
 
 class Swipe extends Dbh {
-    public int $swipes;
-    public $movies; 
+
     //sqlRandomMoviesLikeCategory = "SELECT * FROM Movies WHERE Category LIKE ? AND MID NOT IN ($sqlWatchedMovies) ORDER BY random()";
     public function initializeMovies($uid) {
-        $sqlWatchedMovies = "SELECT MovieId FROM Watchlist WHERE UserId=$uid";
-        $sql = "SELECT * FROM Movies WHERE MID NOT IN ($sqlWatchedMovies)";
-        $stmt = $this->connect()->prepare($sql);
-        $stmt->execute();
-        $this->movies = $stmt->fetchAll();
-        if ($this->movies == false) {
-            return false;
-        }
-    }
-
-    public function getMovies() {
-        return $this->movies;
+        // $sqlWatchedMovies = "SELECT MovieId FROM Watchlist WHERE UserId=$uid";
+        // $stmtWatchedMovies = $this->connect()->prepare($sqlWatchedMovies);
+        // $stmtWatchedMovies->execute();
+        // $watchlistMids = $stmtWatchedMovies->fetchAll();
+        // if ($watchlistMids == false) {
+            $sqlHasMids = "SELECT * FROM Movies";
+            $stmtHasMids = $this->connect()->prepare($sqlHasMids);
+            $stmtHasMids->execute();
+            return $stmtHasMids->fetchAll();
+        // } else {
+        //     $sql = "SELECT * FROM Movies WHERE MID NOT IN ($sqlWatchedMovies)";
+        //     $stmt = $this->connect()->prepare($sql);
+        //     $stmt->execute();
+        //     return $stmt->fetchAll();
+        // }
     }
 
     public function addToWatchlist(int $mid, int $uid) { 

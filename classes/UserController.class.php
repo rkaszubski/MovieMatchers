@@ -15,17 +15,16 @@ class UserController extends Dbh {
 
   // returns <> if not found, returns UID if found
   public function getUserByUsername(string $username) {
+    if (is_null($username)) {
+      return $username;
+    }
     $sql = "SELECT * FROM Users WHERE username=:username";
     $stmt = $this->connect()->prepare($sql);
     $stmt->bindParam(':username', $username);
     $stmt->execute();
     $results = $stmt->fetch();
-    if ($results != false) {
-      $user = new User($results["uid"],
-                    $results["username"],
-                    $results["email"],
-                    $results["role"],
-                    $results["init"]);
+    if ($results['UID'] != null) {
+      $user = new User($results["UID"],$results["username"],$results["email"],$results["role"],$results["init"]);
       return $user;
     }
     return null;
@@ -40,7 +39,7 @@ class UserController extends Dbh {
     if ($results != false) {
       $user = new User
       (
-        $results["uid"],
+        $results["UID"],
         $results["username"],
         $results["email"],
         $results["role"],
@@ -51,7 +50,10 @@ class UserController extends Dbh {
     return null;
   }
 
-  public function getPasswordByUid(string $uid) {
+  public function getPasswordByUid($uid) {
+    if (is_null($uid)) {
+      return $uid;
+    }
     $sql = "SELECT password FROM Passwords WHERE UserId=:uid";
     $stmt = $this->connect()->prepare($sql);
     $stmt->bindParam(':uid', $uid);
