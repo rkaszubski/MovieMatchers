@@ -11,7 +11,7 @@ if(isset($_POST["username"]) && isset($_POST["password"]) && isset($_POST["email
 	$account = new Account();
 	$res = $account->registerUser($username, $email, $password);
 	if ($res == 'success') {
-		echo 'check database, this may have worked';
+		echo 'Success! Please login with your new credentials';
 	}
 	else {
 		echo "rubbah: " . $res;

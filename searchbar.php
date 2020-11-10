@@ -31,7 +31,12 @@ function populateMovie($movieTitle) {
         return $movieData;
     } else {
         // movie was not found in database, use ombd api
-        echo "movie not found, check ombd";
+        $movie = $searchRes->getOmdbRecord($movieTitle);
+        $insertMovie = new SearchUtil();
+        $insertMovie->insertMovie($movie);
+        $movieData = $searchRes->doesMovieExist($movieTitle);
+        // var_dump($movieData);
+        return $movieData;
     }
 }
 
@@ -41,15 +46,26 @@ if (isset($_POST['search'])) {
 	$searchedTitle = trim($_POST['search']);
 	if(!preg_match('/[\'^£%&*()}{#~?><>,|=_+¬-]/', $searchedTitle)) {				//Make sure searched movie has no special characters
         $movieExists = populateMovie($searchedTitle);
+        var_dump($movieExists);
         $title = $movieExists["Title"];
 		$director = $movieExists["Director"];
 		$actors = $movieExists["Actors"];
-		$year = intval($movieExists["ReleaseYear"]); //convert to int to add to database
+		$releaseYear = intval($movieExists["ReleaseYear"]); //convert to int to add to database
 		$imdbRating =floatval($movieExists["IMDB_score"]); //convert to float (cannot do int because it rounds up/down)
 		$categories = $movieExists["Category"];
 		$poster = $movieExists["Poster"];
 		$rated = $movieExists["Rated"];
-		$plot = $movieExists["Plot"];
+        $plot = $movieExists["Plot"];
+        
+        // $title = $movieExists["Title"];
+		// $director = $movieExists["Director"];
+		// $actors = $movieExists["Actors"];
+		// $releaseYear = intval($movieExists["ReleaseYear"]); //convert to int to add to database
+		// $imdbRating =floatval($movieExists["IMDB_score"]); //convert to float (cannot do int because it rounds up/down)
+		// $categories = $movieExists["Category"];
+		// $poster = $movieExists["Poster"];
+		// $rated = $movieExists["Rated"];
+		// $plot = $movieExists["Plot"];
 	} else {
 		header('Location: search.php');// replace with hosted URL
 		exit();
