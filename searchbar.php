@@ -1,14 +1,15 @@
 <?php
+include_once ('classes/movie.class.php');
 include_once ('classes/searchUtil.class.php');
 include_once ('classes/UserView.class.php');
 $userSession = new UserView();
 $userSession->session();
-echo "UserID: " . $_SESSION['uid'] . 
-	"<br>Username: " . $_SESSION['username'] . 
-	"<br>Email: " . $_SESSION['email'] . 
-	"<br>Role: " . $_SESSION['role'] . 
-	"<br>Init: " . $_SESSION['init'] . 
-    "<br>";
+// echo "UserID: " . $_SESSION['uid'] . 
+// 	"<br>Username: " . $_SESSION['username'] . 
+// 	"<br>Email: " . $_SESSION['email'] . 
+// 	"<br>Role: " . $_SESSION['role'] . 
+// 	"<br>Init: " . $_SESSION['init'] . 
+//     "<br>";
     
 $movieError = "";
 $title = $director = $actors = $categories = $poster = $rated = $plot = "";
@@ -31,10 +32,12 @@ function populateMovie($movieTitle) {
         return $movieData;
     } else {
         // movie was not found in database, use ombd api
-        $movie = $searchRes->getOmdbRecord($movieTitle);
+		$movieData = $searchRes->getOmdbRecord($movieTitle);
+		// echo "<br>Movie from OMDB exists: " . !(is_null($movieData)) . "<br>";
+		// var_dump($movieData); echo "<br><br>";
         $insertMovie = new SearchUtil();
-        $insertMovie->insertMovie($movie);
-        $movieData = $searchRes->doesMovieExist($movieTitle);
+        $insertMovie->insertOMDBMovie($movieData);
+		// REFRESH gallery $_SESSION variable (assign it to null). This will RE-initialized the swipe page movies
         // var_dump($movieData);
         return $movieData;
     }
@@ -45,27 +48,17 @@ if (isset($_POST['search'])) {
 	// Store user input from search page
 	$searchedTitle = trim($_POST['search']);
 	if(!preg_match('/[\'^£%&*()}{#~?><>,|=_+¬-]/', $searchedTitle)) {				//Make sure searched movie has no special characters
-        $movieExists = populateMovie($searchedTitle);
-        var_dump($movieExists);
-        $title = $movieExists["Title"];
-		$director = $movieExists["Director"];
-		$actors = $movieExists["Actors"];
-		$releaseYear = intval($movieExists["ReleaseYear"]); //convert to int to add to database
-		$imdbRating =floatval($movieExists["IMDB_score"]); //convert to float (cannot do int because it rounds up/down)
-		$categories = $movieExists["Category"];
-		$poster = $movieExists["Poster"];
-		$rated = $movieExists["Rated"];
-        $plot = $movieExists["Plot"];
-        
-        // $title = $movieExists["Title"];
-		// $director = $movieExists["Director"];
-		// $actors = $movieExists["Actors"];
-		// $releaseYear = intval($movieExists["ReleaseYear"]); //convert to int to add to database
-		// $imdbRating =floatval($movieExists["IMDB_score"]); //convert to float (cannot do int because it rounds up/down)
-		// $categories = $movieExists["Category"];
-		// $poster = $movieExists["Poster"];
-		// $rated = $movieExists["Rated"];
-		// $plot = $movieExists["Plot"];
+		$movieObject = populateMovie($searchedTitle);
+		// use returned object to show movie information
+        $title 			=$movieObject->getTitle();
+		$director 		=$movieObject->getDirector();
+		$actors 		=$movieObject->getActors();
+		$releaseYear 	=$movieObject->getReleaseYear(); //convert to int to add to database
+		$imdbRating 	=$movieObject->getIMDBScore(); //convert to float (cannot do int because it rounds up/down)
+		$categories 	=$movieObject->getCategories();
+		$poster 		=$movieObject->getPoster();
+		$rated 			=$movieObject->getRated();
+        $plot 			=$movieObject->getPlot();
 	} else {
 		header('Location: search.php');// replace with hosted URL
 		exit();
