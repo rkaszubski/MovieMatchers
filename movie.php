@@ -4,6 +4,7 @@ include_once ('classes/User.class.php');
 include_once ('classes/swipe.class.php');
 include_once ('classes/account.class.php');
 include_once ('classes/gallery.class.php');
+include_once ('classes/watchlistbroker.class.php');
 $gallery = $title = $director = $releaseYear = $actors = $categories = $poster = $mid = "";
 
 $userSession = new UserView();
@@ -34,7 +35,12 @@ $poster = $movie['Poster'];
 $mid = $movie['MID'];
 
 if (isset($_POST['watchMovie'])) {
-	
+	echo $mid;
+	$watchlistBroker = new WatchlistBroker();
+	$ret = $watchlistBroker->movieExistsInUserWatchlist($_SESSION['uid'], $mid);
+	if (is_null($ret)) {
+		$watchlistBroker->addToWatchlist($_SESSION['uid'], $mid);
+	}
 }
 if (isset($_POST['passMovie'])) {
 	

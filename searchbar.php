@@ -38,7 +38,10 @@ function populateMovie($movieTitle) {
         $insertMovie = new SearchUtil();
         $insertMovie->insertOMDBMovie($movieData);
 		// REFRESH gallery $_SESSION variable (assign it to null). This will RE-initialized the swipe page movies
-        // var_dump($movieData);
+		if (isset($_SESSION['gallery'])) {
+			$_SESSION['gallery'] = null;
+		}
+		// var_dump($movieData);
         return $movieData;
     }
 }
