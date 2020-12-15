@@ -15,30 +15,25 @@
 ?>
 <html>
 		<title>Login</title>
-		<link rel="stylesheet" href="css/stylesheet.css">
-		<link rel="stylesheet" href="css/register.css">
+		<link rel="stylesheet" href="css/reset.css">
+		<link rel="stylesheet" href="css/login.css">
 		<link rel="icon" href="assets/favicon/favicon.ico">
 	</head>
 	<body>
-		<div class = header style="font-size:4vw;">
-				<img src="assets/MMHeader2.png" style="width:60%">
+		<div class="header">
+				<img src="assets/MMHeader2.png">
 		</div>
-		<div class= container>
-			<div class=overlay>
-				<br>
-				<form id = msform method="POST">
-					<fieldset>
-					<h2 class="fs-title">Login</h2>
-					<input type="text" placeholder="username" name="username" required></input>
-					<input type="password" placeholder="password" name="password" required></input><br>
+		<div class="login-card">
+			<div class="login-card-contents">
+				<form class="login-card-form" method="POST">
+					<h2 class="login-card-form-title">Login</h2>
+					<input type="text" class="login-card-form-input" placeholder="username" name="username" required></input>
+					<input type="password" class="login-card-form-input" placeholder="password" name="password" required></input><br>
 					<span class="help-block"><?php echo $logonError; ?></span>
-					<input type="submit" value="Login" class = action-button></input><br>
-
+					<input type="submit" value="Login" class="login-card-form-submit"></input><br>
 					<a href="register.php">Register Now</a>
-					</fieldset>
 				</form>
 			</div>
 		</div>
-		<?php include('components/footer.php'); ?>
 	</body>
 </html>

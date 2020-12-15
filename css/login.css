@@ -1,0 +1,40 @@
+@import url(https://fonts.googleapis.com/css?family=Montserrat);
+body {
+	font-family: montserrat, arial, verdana;
+	overflow-x: hidden;
+}
+.header {
+  background-color: #4d0013;
+  text-align: center;
+}
+.header img {
+  width: 60%;
+}
+/* this element handles the border, width,
+and style of the card surrounding
+the login form */
+.login-card {
+  border: 1px solid #ccc;
+	border-radius: 3px;
+  box-sizing: border-box;
+  margin: 20% 40%;
+}
+.login-card-contents {
+  padding: 5%;
+}
+.login-card-form {
+  text-align: center;
+}
+.login-card-form-title {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.login-card-form-input {
+  margin-bottom: 13px;
+  border: 1px solid #ccc;
+	border-radius: 3px;
+}
+.login-card-form-submit {
+  margin-top: 15px;
+  margin-bottom: 7px;
+}
